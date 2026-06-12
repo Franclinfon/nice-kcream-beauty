@@ -71,6 +71,24 @@ class Product
     #[ORM\OneToMany(targetEntity: ProductImage::class, mappedBy: 'product', orphanRemoval: true)]
     private Collection $productImages;
 
+    /**
+     * @var Collection<int, Product>
+     */
+    #[ORM\ManyToMany(targetEntity: Product::class)]
+    #[ORM\JoinTable(name: 'product_related_products')]
+    private Collection $relatedProducts;
+
+    /**
+     * @var Collection<int, Product>
+     */
+    #[ORM\ManyToMany(targetEntity: Product::class)]
+    #[ORM\JoinTable(
+        name: 'product_coffret_items',
+        joinColumns: [new ORM\JoinColumn(name: 'coffret_id', referencedColumnName: 'id')],
+        inverseJoinColumns: [new ORM\JoinColumn(name: 'item_id', referencedColumnName: 'id')]
+    )]
+    private Collection $coffretItems;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -80,6 +98,8 @@ class Product
         $this->isMiseEnAvant = false;
         $this->isActive = true;
         $this->productImages = new ArrayCollection();
+        $this->relatedProducts = new ArrayCollection();
+        $this->coffretItems = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -305,6 +325,54 @@ class Product
                 $productImage->setProduct(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Product>
+     */
+    public function getRelatedProducts(): Collection
+    {
+        return $this->relatedProducts;
+    }
+
+    public function addRelatedProduct(Product $product): static
+    {
+        if (!$this->relatedProducts->contains($product)) {
+            $this->relatedProducts->add($product);
+        }
+
+        return $this;
+    }
+
+    public function removeRelatedProduct(Product $product): static
+    {
+        $this->relatedProducts->removeElement($product);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Product>
+     */
+    public function getCoffretItems(): Collection
+    {
+        return $this->coffretItems;
+    }
+
+    public function addCoffretItem(Product $product): static
+    {
+        if (!$this->coffretItems->contains($product)) {
+            $this->coffretItems->add($product);
+        }
+
+        return $this;
+    }
+
+    public function removeCoffretItem(Product $product): static
+    {
+        $this->coffretItems->removeElement($product);
 
         return $this;
     }
