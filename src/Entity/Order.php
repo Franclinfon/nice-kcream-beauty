@@ -72,11 +72,18 @@ class Order
     #[ORM\OneToMany(targetEntity: OrderItem::class, mappedBy: 'commande', orphanRemoval: true)]
     private Collection $orderItems;
 
+    /**
+     * @var Collection<int, OrderStatusHistory>
+     */
+    #[ORM\OneToMany(targetEntity: OrderStatusHistory::class, mappedBy: 'commande', orphanRemoval: true)]
+    private Collection $orderStatusHistories;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->statut = 'en_attente_paiement';
         $this->orderItems = new ArrayCollection();
+        $this->orderStatusHistories = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -300,6 +307,36 @@ class Order
             // set the owning side to null (unless already changed)
             if ($orderItem->getCommande() === $this) {
                 $orderItem->setCommande(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, OrderStatusHistory>
+     */
+    public function getOrderStatusHistories(): Collection
+    {
+        return $this->orderStatusHistories;
+    }
+
+    public function addOrderStatusHistory(OrderStatusHistory $orderStatusHistory): static
+    {
+        if (!$this->orderStatusHistories->contains($orderStatusHistory)) {
+            $this->orderStatusHistories->add($orderStatusHistory);
+            $orderStatusHistory->setCommande($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrderStatusHistory(OrderStatusHistory $orderStatusHistory): static
+    {
+        if ($this->orderStatusHistories->removeElement($orderStatusHistory)) {
+            // set the owning side to null (unless already changed)
+            if ($orderStatusHistory->getCommande() === $this) {
+                $orderStatusHistory->setCommande(null);
             }
         }
 
