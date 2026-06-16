@@ -10,7 +10,7 @@
                     <h1 class="display-4 fw-bold" style="color: #c95f83;">L'Essence d'une Peau Éclatante</h1>
                     <p class="lead text-muted">Soins experts, produits coréens sélectionnés pour leur efficacité, leur innovation et le respect de votre peau.</p>
                     <div class="d-flex gap-3 mt-4">
-                        <a href="#" class="btn btn-pink btn-lg">Découvrir la boutique</a>
+                        <a href="{{ path('app_front_product_index') }}" class="btn btn-pink btn-lg">Découvrir la boutique</a>
                         <a href="#" class="btn btn-outline-dark btn-lg">Réserver un soin</a>
                     </div>
                 </div>
@@ -30,13 +30,15 @@
                 {% for product in featuredProducts %}
                     <div class="col-md-3 mb-4">
                         <div class="card h-100 border-0 shadow-sm">
-                            <div class="card-body text-center">
-                                {% if product.mainImage %}
-                                    <img src="{{ asset('uploads/products/' ~ product.mainImage.filename) }}" class="img-fluid mb-3" style="max-height: 150px;" alt="{{ product.nom }}">
-                                {% endif %}
-                                <h6 class="card-title">{{ product.nom }}</h6>
-                                <p class="fw-bold" style="color: #c95f83;">{{ product.prix|number_format(2, ',', ' ') }} €</p>
-                            </div>
+                            <a href="{{ path('app_front_product_show', {slug: product.slug}) }}" class="text-decoration-none text-dark">
+                                <div class="card-body text-center">
+                                    {% if product.mainImage %}
+                                        <img src="{{ asset('uploads/products/' ~ product.mainImage.filename) }}" class="img-fluid mb-3" style="max-height: 150px;" alt="{{ product.nom }}">
+                                    {% endif %}
+                                    <h6 class="card-title">{{ product.nom }}</h6>
+                                    <p class="fw-bold" style="color: #c95f83;">{{ product.prix|number_format(2, ',', ' ') }} €</p>
+                                </div>
+                            </a>
                         </div>
                     </div>
                 {% else %}

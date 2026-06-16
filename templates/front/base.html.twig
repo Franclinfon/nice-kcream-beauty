@@ -31,7 +31,7 @@
             <div class="collapse navbar-collapse" id="mainNav">
                 <ul class="navbar-nav mx-auto">
                     <li class="nav-item"><a class="nav-link" href="{{ path('app_front_home') }}">Accueil</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Boutique</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ path('app_front_product_index') }}">Boutique</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">Soins</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">Analyse de peau</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">Blog</a></li>
@@ -57,7 +57,7 @@
                 <div class="col-md-3 mb-4">
                     <h6>Boutique</h6>
                     <ul class="list-unstyled small">
-                        <li><a href="#">Tous nos produits</a></li>
+                        <li><a href="{{ path('app_front_product_index') }}">Tous nos produits</a></li>
                         <li><a href="#">Nouveautés</a></li>
                         <li><a href="#">Coffrets</a></li>
                     </ul>
