@@ -54,6 +54,11 @@ class Category
         return $this->id;
     }
 
+    public function __toString(): string
+    {
+        return $this->nom ?? '';
+    }
+
     public function getNom(): ?string
     {
         return $this->nom;
