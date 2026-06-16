@@ -348,6 +348,17 @@ class Product
         return $this;
     }
 
+    public function getMainImage(): ?ProductImage
+    {
+        foreach ($this->productImages as $image) {
+            if ($image->isMain()) {
+                return $image;
+            }
+        }
+
+        return $this->productImages->first() ?: null;
+    }
+
     /**
      * @return Collection<int, Product>
      */

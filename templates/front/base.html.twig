@@ -1,0 +1,86 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        body { font-family: 'Helvetica Neue', Arial, sans-serif; color: #2d2d2d; }
+        .top-bar { background-color: #f8e6ea; font-size: 0.85rem; padding: 0.4rem 0; }
+        .navbar-brand { font-weight: 700; letter-spacing: 1px; }
+        .nav-link { color: #2d2d2d !important; font-weight: 500; }
+        .btn-pink { background-color: #e0769a; border-color: #e0769a; color: #fff; }
+        .btn-pink:hover { background-color: #c95f83; border-color: #c95f83; color: #fff; }
+        footer { background-color: #2d2d2d; color: #fff; }
+        footer a { color: #ddd; text-decoration: none; }
+        footer a:hover { color: #fff; }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="top-bar text-center">
+        Livraison offerte dès 70€ d'achat · La référence K-Beauty à Angers
+    </div>
+
+    <header class="border-bottom bg-white">
+        <nav class="navbar navbar-expand-lg navbar-light container py-3">
+            <a class="navbar-brand" href="{{ path('app_front_home') }}">NICE K'CREAM <span class="d-block small text-muted" style="letter-spacing: 2px;">BEAUTY</span></a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item"><a class="nav-link" href="{{ path('app_front_home') }}">Accueil</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Boutique</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Soins</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Analyse de peau</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Blog</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">À propos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
+                </ul>
+                <a href="#" class="btn btn-pink">Réserver un soin</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="py-5 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3 mb-4">
+                    <h5>Nice K'Cream Beauty</h5>
+                    <p class="small">Institut spécialisé en beauté coréenne, soins experts et cosmétiques sélectionnés pour révéler l'éclat naturel de votre peau.</p>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h6>Boutique</h6>
+                    <ul class="list-unstyled small">
+                        <li><a href="#">Tous nos produits</a></li>
+                        <li><a href="#">Nouveautés</a></li>
+                        <li><a href="#">Coffrets</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h6>Soins</h6>
+                    <ul class="list-unstyled small">
+                        <li><a href="#">Soins visage</a></li>
+                        <li><a href="#">Épilation laser</a></li>
+                        <li><a href="#">Massages</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h6>Aide & infos</h6>
+                    <ul class="list-unstyled small">
+                        <li><a href="#">Livraison</a></li>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="border-secondary">
+            <p class="text-center small mb-0">&copy; {{ "now"|date("Y") }} Nice K'Cream Beauty — Tous droits réservés.</p>
+        </div>
+    </footer>
+{% endblock %}
