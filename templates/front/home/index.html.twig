@@ -45,4 +45,28 @@
             </div>
         </div>
     </section>
+
+    <section class="py-5 bg-light">
+        <div class="container">
+            <h2 class="text-center mb-5">Nos soins experts</h2>
+            <div class="row">
+                {% for service in services %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100 border-0 shadow-sm">
+                            {% if service.image %}
+                                <img src="{{ asset('uploads/services/' ~ service.image) }}" class="card-img-top" alt="{{ service.titre }}">
+                            {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title">{{ service.titre }}</h5>
+                                <p class="card-text text-muted">{{ service.description }}</p>
+                                <a href="#" class="text-decoration-none fw-bold" style="color: #c95f83;">Découvrir</a>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <p class="text-center text-muted">Aucun soin publié pour le moment.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
 {% endblock %}
