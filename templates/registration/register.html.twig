@@ -1,0 +1,68 @@
+{% extends 'front/base.html.twig' %}
+
+{% block title %}Créer un compte — Nice K'Cream Beauty{% endblock %}
+
+{% block content %}
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <h1 class="mb-4">Créer un compte</h1>
+
+                {{ form_errors(registrationForm) }}
+                {{ form_start(registrationForm) }}
+                    <div class="row">
+                        <div class="col-md-6">
+                            {{ form_row(registrationForm.prenom, {label: 'Prénom'}) }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form_row(registrationForm.nom, {label: 'Nom'}) }}
+                        </div>
+                    </div>
+                    {{ form_row(registrationForm.email, {label: 'Email'}) }}
+                    {{ form_row(registrationForm.telephone, {label: 'Téléphone (optionnel)'}) }}
+
+                    <div class="mb-3">
+                        <label class="form-label">Mot de passe</label>
+                        <div class="input-group">
+                            {{ form_widget(registrationForm.plainPassword.first, {attr: {class: 'form-control', id: 'password1'}}) }}
+                            <button type="button" class="btn btn-outline-secondary toggle-password" data-target="password1">👁</button>
+                        </div>
+                        {{ form_errors(registrationForm.plainPassword.first) }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Confirmer le mot de passe</label>
+                        <div class="input-group">
+                            {{ form_widget(registrationForm.plainPassword.second, {attr: {class: 'form-control', id: 'password2'}}) }}
+                            <button type="button" class="btn btn-outline-secondary toggle-password" data-target="password2">👁</button>
+                        </div>
+                        {{ form_errors(registrationForm.plainPassword.second) }}
+                    </div>
+
+                    {{ form_row(registrationForm.agreeTerms, {label: 'J\'accepte les conditions générales'}) }}
+
+                    <button type="submit" class="btn btn-pink btn-lg w-100 mt-3">Créer mon compte</button>
+                {{ form_end(registrationForm) }}
+
+                <p class="text-center mt-4 text-muted">
+                    Déjà un compte ? <a href="{{ path('app_login') }}" style="color: #c95f83;">Se connecter</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll('.toggle-password').forEach(function(button) {
+            button.addEventListener('click', function() {
+                const input = this.closest('.input-group').querySelector('input');
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    this.textContent = '🙈';
+                } else {
+                    input.type = 'password';
+                    this.textContent = '👁';
+                }
+            });
+        });
+    </script>
+{% endblock %}
