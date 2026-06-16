@@ -4,8 +4,11 @@ namespace App\Entity;
 
 use App\Repository\ProductImageRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\File;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[ORM\Entity(repositoryClass: ProductImageRepository::class)]
+#[Vich\Uploadable]
 class ProductImage
 {
     #[ORM\Id]
@@ -17,14 +20,26 @@ class ProductImage
     #[ORM\JoinColumn(nullable: false)]
     private ?Product $product = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $filename = null;
+
+    #[Vich\UploadableField(mapping: 'product_images', fileNameProperty: 'filename')]
+    private ?File $imageFile = null;
 
     #[ORM\Column]
     private ?int $position = null;
 
     #[ORM\Column]
     private ?bool $isMain = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $updatedAt = null;
+
+    public function __construct()
+    {
+        $this->position = 0;
+        $this->isMain = false;
+    }
 
     public function getId(): ?int
     {
@@ -48,11 +63,27 @@ class ProductImage
         return $this->filename;
     }
 
-    public function setFilename(string $filename): static
+    public function setFilename(?string $filename): static
     {
         $this->filename = $filename;
 
         return $this;
+    }
+
+    public function setImageFile(?File $imageFile = null): static
+    {
+        $this->imageFile = $imageFile;
+
+        if (null !== $imageFile) {
+            $this->updatedAt = new \DateTimeImmutable();
+        }
+
+        return $this;
+    }
+
+    public function getImageFile(): ?File
+    {
+        return $this->imageFile;
     }
 
     public function getPosition(): ?int
@@ -75,6 +106,18 @@ class ProductImage
     public function setIsMain(bool $isMain): static
     {
         $this->isMain = $isMain;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static
+    {
+        $this->updatedAt = $updatedAt;
 
         return $this;
     }
