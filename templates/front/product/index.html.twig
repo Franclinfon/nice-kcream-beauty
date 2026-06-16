@@ -1,0 +1,51 @@
+{% extends 'front/base.html.twig' %}
+
+{% block title %}Boutique — Nice K'Cream Beauty{% endblock %}
+
+{% block content %}
+    <div class="container py-5">
+        <h1 class="mb-4">Boutique</h1>
+
+        <div class="row">
+            <div class="col-md-3 mb-4">
+                <h6>Catégories</h6>
+                <ul class="list-unstyled">
+                    <li class="mb-2">
+                        <a href="{{ path('app_front_product_index') }}" class="text-decoration-none {{ currentCategorySlug is null ? 'fw-bold' : 'text-muted' }}">
+                            Tous les produits
+                        </a>
+                    </li>
+                    {% for category in categories %}
+                        <li class="mb-2">
+                            <a href="{{ path('app_front_product_index', {categorie: category.slug}) }}" class="text-decoration-none {{ currentCategorySlug == category.slug ? 'fw-bold' : 'text-muted' }}">
+                                {{ category.nom }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div class="col-md-9">
+                <div class="row">
+                    {% for product in products %}
+                        <div class="col-md-4 mb-4">
+                            <div class="card h-100 border-0 shadow-sm">
+                                <a href="{{ path('app_front_product_show', {slug: product.slug}) }}" class="text-decoration-none text-dark">
+                                    {% if product.mainImage %}
+                                        <img src="{{ asset('uploads/products/' ~ product.mainImage.filename) }}" class="card-img-top" alt="{{ product.nom }}">
+                                    {% endif %}
+                                    <div class="card-body text-center">
+                                        <h6 class="card-title">{{ product.nom }}</h6>
+                                        <p class="fw-bold" style="color: #c95f83;">{{ product.prix|number_format(2, ',', ' ') }} €</p>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    {% else %}
+                        <p class="text-muted">Aucun produit trouvé dans cette catégorie.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

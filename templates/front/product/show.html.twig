@@ -1,0 +1,82 @@
+{% extends 'front/base.html.twig' %}
+
+{% block title %}{{ product.nom }} — Nice K'Cream Beauty{% endblock %}
+
+{% block content %}
+    <div class="container py-5">
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ path('app_front_home') }}">Accueil</a></li>
+                <li class="breadcrumb-item"><a href="{{ path('app_front_product_index') }}">Boutique</a></li>
+                <li class="breadcrumb-item active">{{ product.nom }}</li>
+            </ol>
+        </nav>
+
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                {% if product.mainImage %}
+                    <img src="{{ asset('uploads/products/' ~ product.mainImage.filename) }}" class="img-fluid rounded shadow-sm" alt="{{ product.nom }}">
+                {% endif %}
+
+                {% if product.productImages|length > 1 %}
+                    <div class="d-flex gap-2 mt-3">
+                        {% for image in product.productImages %}
+                            <img src="{{ asset('uploads/products/' ~ image.filename) }}" class="rounded border" style="width: 70px; height: 70px; object-fit: cover; cursor: pointer;" alt="{{ product.nom }}">
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="col-md-6">
+                <h1 class="mb-2">{{ product.nom }}</h1>
+                <p class="text-muted">{{ product.category.nom }}</p>
+
+                {% if product.prixPromo %}
+                    <p class="mb-1">
+                        <span class="text-decoration-line-through text-muted">{{ product.prix|number_format(2, ',', ' ') }} €</span>
+                        <span class="fw-bold fs-4 ms-2" style="color: #c95f83;">{{ product.prixPromo|number_format(2, ',', ' ') }} €</span>
+                    </p>
+                {% else %}
+                    <p class="fw-bold fs-4" style="color: #c95f83;">{{ product.prix|number_format(2, ',', ' ') }} €</p>
+                {% endif %}
+
+                {% if product.isRupture %}
+                    <p class="badge bg-secondary">Rupture de stock</p>
+                {% endif %}
+
+                <p class="mt-3">{{ product.description }}</p>
+
+                {% if product.conseilsUtilisation %}
+                    <h6 class="mt-4">Conseils d'utilisation</h6>
+                    <p class="text-muted">{{ product.conseilsUtilisation }}</p>
+                {% endif %}
+
+                <button class="btn btn-pink btn-lg mt-3" {{ product.isRupture ? 'disabled' : '' }}>
+                    Ajouter au panier
+                </button>
+            </div>
+        </div>
+
+        {% if product.relatedProducts|length > 0 %}
+            <hr class="my-5">
+            <h3 class="mb-4">Vous pourriez aussi aimer</h3>
+            <div class="row">
+                {% for related in product.relatedProducts %}
+                    <div class="col-md-3 mb-4">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <a href="{{ path('app_front_product_show', {slug: related.slug}) }}" class="text-decoration-none text-dark">
+                                {% if related.mainImage %}
+                                    <img src="{{ asset('uploads/products/' ~ related.mainImage.filename) }}" class="card-img-top" alt="{{ related.nom }}">
+                                {% endif %}
+                                <div class="card-body text-center">
+                                    <h6 class="card-title">{{ related.nom }}</h6>
+                                    <p class="fw-bold" style="color: #c95f83;">{{ related.prix|number_format(2, ',', ' ') }} €</p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
