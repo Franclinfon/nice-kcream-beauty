@@ -1,0 +1,25 @@
+{% extends 'front/base.html.twig' %}
+
+{% block title %}Ajouter une adresse — Nice K'Cream Beauty{% endblock %}
+
+{% block content %}
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <h1 class="mb-4">Ajouter une adresse</h1>
+
+                {{ form_start(form) }}
+                    {{ form_row(form.label, {label: 'Libellé (ex: Domicile, Bureau)'}) }}
+                    {{ form_row(form.rue, {label: 'Rue'}) }}
+                    {{ form_row(form.complement, {label: 'Complément (optionnel)'}) }}
+                    {{ form_row(form.codePostal) }}
+                    {{ form_row(form.ville, {label: 'Ville'}) }}
+                    {{ form_row(form.pays, {label: 'Pays'}) }}
+                    {{ form_row(form.isDefault) }}
+
+                    <button type="submit" class="btn btn-pink btn-lg w-100 mt-3">Enregistrer l'adresse</button>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

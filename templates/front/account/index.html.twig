@@ -1,0 +1,48 @@
+{% extends 'front/base.html.twig' %}
+
+{% block title %}Mon compte — Nice K'Cream Beauty{% endblock %}
+
+{% block content %}
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-md-3 mb-4">
+                <div class="list-group">
+                    <a href="{{ path('app_front_account_index') }}" class="list-group-item list-group-item-action active" style="background-color: #e0769a; border-color: #e0769a;">
+                        Mon profil
+                    </a>
+                    <a href="{{ path('app_front_account_addresses') }}" class="list-group-item list-group-item-action">
+                        Mes adresses
+                    </a>
+                    <a href="{{ path('app_logout') }}" class="list-group-item list-group-item-action text-danger">
+                        Se déconnecter
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-md-9">
+                <h1 class="mb-4">Mon profil</h1>
+
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <dl class="row mb-0">
+                            <dt class="col-sm-3">Prénom</dt>
+                            <dd class="col-sm-9">{{ app.user.prenom }}</dd>
+
+                            <dt class="col-sm-3">Nom</dt>
+                            <dd class="col-sm-9">{{ app.user.nom }}</dd>
+
+                            <dt class="col-sm-3">Email</dt>
+                            <dd class="col-sm-9">{{ app.user.email }}</dd>
+
+                            <dt class="col-sm-3">Téléphone</dt>
+                            <dd class="col-sm-9">{{ app.user.telephone ?? 'Non renseigné' }}</dd>
+
+                            <dt class="col-sm-3">Membre depuis</dt>
+                            <dd class="col-sm-9">{{ app.user.createdAt|date('d/m/Y') }}</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
