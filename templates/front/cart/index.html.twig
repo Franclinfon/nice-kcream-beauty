@@ -1,0 +1,67 @@
+{% extends 'front/base.html.twig' %}
+
+{% block title %}Mon panier — Nice K'Cream Beauty{% endblock %}
+
+{% block content %}
+    <div class="container py-5">
+        <h1 class="mb-4">Mon panier</h1>
+
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">{{ message }}</div>
+        {% endfor %}
+
+        {% if cartItems|length > 0 %}
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th>Produit</th>
+                            <th>Prix unitaire</th>
+                            <th>Quantité</th>
+                            <th>Sous-total</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in cartItems %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center gap-3">
+                                        {% if item.product.mainImage %}
+                                            <img src="{{ asset('uploads/products/' ~ item.product.mainImage.filename) }}" style="width: 60px; height: 60px; object-fit: cover;" class="rounded" alt="{{ item.product.nom }}">
+                                        {% endif %}
+                                        <span>{{ item.product.nom }}</span>
+                                    </div>
+                                </td>
+                                <td>{{ (item.product.prixPromo ?? item.product.prix)|number_format(2, ',', ' ') }} €</td>
+                                <td style="width: 140px;">
+                                    <form action="{{ path('app_front_cart_update', {id: item.product.id}) }}" method="post" class="d-flex gap-2">
+                                        <input type="number" name="quantity" value="{{ item.quantity }}" min="1" class="form-control form-control-sm" style="width: 70px;">
+                                        <button type="submit" class="btn btn-sm btn-outline-secondary">OK</button>
+                                    </form>
+                                </td>
+                                <td class="fw-bold">{{ item.subtotal|number_format(2, ',', ' ') }} €</td>
+                                <td>
+                                    <form action="{{ path('app_front_cart_remove', {id: item.product.id}) }}" method="post">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">Supprimer</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="d-flex justify-content-end mt-4">
+                <div class="text-end">
+                    <h4>Total : <span style="color: #c95f83;">{{ total|number_format(2, ',', ' ') }} €</span></h4>
+                    <a href="{{ path('app_front_product_index') }}" class="btn btn-outline-dark mt-2">Continuer mes achats</a>
+                    <a href="#" class="btn btn-pink mt-2">Passer la commande</a>
+                </div>
+            </div>
+        {% else %}
+            <p class="text-muted">Votre panier est vide.</p>
+            <a href="{{ path('app_front_product_index') }}" class="btn btn-pink">Découvrir la boutique</a>
+        {% endif %}
+    </div>
+{% endblock %}

@@ -51,9 +51,14 @@
                     <p class="text-muted">{{ product.conseilsUtilisation }}</p>
                 {% endif %}
 
-                <button class="btn btn-pink btn-lg mt-3" {{ product.isRupture ? 'disabled' : '' }}>
-                    Ajouter au panier
-                </button>
+                {% if not product.isRupture %}
+                    <form action="{{ path('app_front_cart_add', {id: product.id}) }}" method="post" class="d-flex gap-2 align-items-center mt-3">
+                        <input type="number" name="quantity" value="1" min="1" class="form-control" style="width: 80px;">
+                        <button type="submit" class="btn btn-pink btn-lg">Ajouter au panier</button>
+                    </form>
+                {% else %}
+                    <button class="btn btn-pink btn-lg mt-3" disabled>Ajouter au panier</button>
+                {% endif %}
             </div>
         </div>
 
