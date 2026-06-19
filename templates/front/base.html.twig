@@ -38,6 +38,15 @@
                     <li class="nav-item"><a class="nav-link" href="#">À propos</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
                 </ul>
+                {% if app.user %}
+                    <a href="{{ path('app_front_account_index') }}" class="btn btn-outline-dark me-2">
+                        👤 {{ app.user.prenom }}
+                    </a>
+                {% else %}
+                    <a href="{{ path('app_login') }}" class="btn btn-outline-dark me-2">
+                        Se connecter
+                    </a>
+                {% endif %}
                 <a href="{{ path('app_front_cart_index') }}" class="btn btn-outline-dark position-relative me-2">
                     🛒 Panier
                     {% if cart_item_count() > 0 %}
