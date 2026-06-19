@@ -2,7 +2,6 @@
 
 namespace App\Controller\Front;
 
-use App\Entity\Product;
 use App\Repository\CategoryRepository;
 use App\Repository\ProductRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -16,23 +15,29 @@ final class ProductController extends AbstractController
     public function index(Request $request, ProductRepository $productRepository, CategoryRepository $categoryRepository): Response
     {
         $categorySlug = $request->query->get('categorie');
+        $search = $request->query->get('q');
+        $sort = $request->query->get('tri', 'nouveautes');
+        $nouveautesOnly = $request->query->getBoolean('nouveautes');
+        $promosOnly = $request->query->getBoolean('promos');
 
-        $criteria = ['isActive' => true];
+        $products = $productRepository->findFiltered(
+            categorySlug: $categorySlug,
+            search: $search,
+            sort: $sort,
+            nouveautesOnly: $nouveautesOnly,
+            promosOnly: $promosOnly,
+        );
 
-        if ($categorySlug) {
-            $category = $categoryRepository->findOneBy(['slug' => $categorySlug]);
-            if ($category) {
-                $criteria['category'] = $category;
-            }
-        }
-
-        $products = $productRepository->findBy($criteria, ['createdAt' => 'DESC']);
         $categories = $categoryRepository->findAll();
 
         return $this->render('front/product/index.html.twig', [
             'products' => $products,
             'categories' => $categories,
             'currentCategorySlug' => $categorySlug,
+            'currentSearch' => $search,
+            'currentSort' => $sort,
+            'nouveautesOnly' => $nouveautesOnly,
+            'promosOnly' => $promosOnly,
         ]);
     }
 

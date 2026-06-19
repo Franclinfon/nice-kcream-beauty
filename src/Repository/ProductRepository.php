@@ -16,28 +16,42 @@ class ProductRepository extends ServiceEntityRepository
         parent::__construct($registry, Product::class);
     }
 
-    //    /**
-    //     * @return Product[] Returns an array of Product objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('p')
-    //            ->andWhere('p.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('p.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    public function findFiltered(
+        ?string $categorySlug = null,
+        ?string $search = null,
+        ?string $sort = null,
+        ?bool $nouveautesOnly = false,
+        ?bool $promosOnly = false,
+    ): array {
+        $qb = $this->createQueryBuilder('p')
+            ->join('p.category', 'c')
+            ->where('p.isActive = true');
 
-    //    public function findOneBySomeField($value): ?Product
-    //    {
-    //        return $this->createQueryBuilder('p')
-    //            ->andWhere('p.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+        if ($categorySlug) {
+            $qb->andWhere('c.slug = :categorySlug')
+               ->setParameter('categorySlug', $categorySlug);
+        }
+
+        if ($search) {
+            $qb->andWhere('p.nom LIKE :search OR p.description LIKE :search')
+               ->setParameter('search', '%' . $search . '%');
+        }
+
+        if ($nouveautesOnly) {
+            $qb->andWhere('p.isNouveaute = true');
+        }
+
+        if ($promosOnly) {
+            $qb->andWhere('p.prixPromo IS NOT NULL');
+        }
+
+        match ($sort) {
+            'prix_asc' => $qb->orderBy('p.prix', 'ASC'),
+            'prix_desc' => $qb->orderBy('p.prix', 'DESC'),
+            'nouveautes' => $qb->orderBy('p.createdAt', 'DESC'),
+            default => $qb->orderBy('p.createdAt', 'DESC'),
+        };
+
+        return $qb->getQuery()->getResult();
+    }
 }
