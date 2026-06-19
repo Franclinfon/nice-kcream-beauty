@@ -3,6 +3,8 @@
 {% block title %}Nice K'Cream Beauty — La référence K-Beauty à Angers{% endblock %}
 
 {% block content %}
+
+    {# Hero #}
     <section class="bg-light py-5">
         <div class="container">
             <div class="row align-items-center">
@@ -23,44 +25,65 @@
         </div>
     </section>
 
-    <section class="py-5">
+    {# Bandeau avantages #}
+    <section class="py-4 border-bottom border-top">
         <div class="container">
-            <h2 class="text-center mb-5">Produits phares</h2>
-            <div class="row">
-                {% for product in featuredProducts %}
-                    <div class="col-md-3 mb-4">
-                        <div class="card h-100 border-0 shadow-sm">
-                            <a href="{{ path('app_front_product_show', {slug: product.slug}) }}" class="text-decoration-none text-dark">
-                                <div class="card-body text-center">
-                                    {% if product.mainImage %}
-                                        <img src="{{ asset('uploads/products/' ~ product.mainImage.filename) }}" class="img-fluid mb-3" style="max-height: 150px;" alt="{{ product.nom }}">
-                                    {% endif %}
-                                    <h6 class="card-title">{{ product.nom }}</h6>
-                                    <p class="fw-bold" style="color: #c95f83;">{{ product.prix|number_format(2, ',', ' ') }} €</p>
-                                </div>
-                            </a>
+            <div class="row text-center">
+                <div class="col-md-3 mb-3 mb-md-0">
+                    <div class="d-flex align-items-center justify-content-center gap-2">
+                        <span style="font-size: 1.5rem;">🌿</span>
+                        <div class="text-start">
+                            <p class="fw-bold mb-0 small">SOINS EXPERTS</p>
+                            <p class="text-muted mb-0 small">Des protocoles ciblés pour répondre à chaque besoin de votre peau.</p>
                         </div>
                     </div>
-                {% else %}
-                    <p class="text-center text-muted">Aucun produit mis en avant pour le moment.</p>
-                {% endfor %}
+                </div>
+                <div class="col-md-3 mb-3 mb-md-0">
+                    <div class="d-flex align-items-center justify-content-center gap-2">
+                        <span style="font-size: 1.5rem;">✨</span>
+                        <div class="text-start">
+                            <p class="fw-bold mb-0 small">EXPERTISE K-BEAUTY</p>
+                            <p class="text-muted mb-0 small">Des produits coréens rigoureusement sélectionnés pour des résultats visibles.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3 mb-md-0">
+                    <div class="d-flex align-items-center justify-content-center gap-2">
+                        <span style="font-size: 1.5rem;">🔬</span>
+                        <div class="text-start">
+                            <p class="fw-bold mb-0 small">ANALYSE DE PEAU OFFERTE</p>
+                            <p class="text-muted mb-0 small">Un diagnostic personnalisé grâce à notre technologie de pointe.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="d-flex align-items-center justify-content-center gap-2">
+                        <span style="font-size: 1.5rem;">📍</span>
+                        <div class="text-start">
+                            <p class="fw-bold mb-0 small">RÉFÉRENCE À ANGERS</p>
+                            <p class="text-muted mb-0 small">Votre institut spécialisé en beauté coréenne au cœur d'Angers.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
+    {# Nos soins experts #}
     <section class="py-5 bg-light">
         <div class="container">
-            <h2 class="text-center mb-5">Nos soins experts</h2>
+            <h2 class="text-center mb-2">Nos soins experts</h2>
+            <div class="text-center mb-5"><span style="display:inline-block;width:40px;height:2px;background:#c95f83;"></span></div>
             <div class="row">
                 {% for service in services %}
                     <div class="col-md-4 mb-4">
                         <div class="card h-100 border-0 shadow-sm">
                             {% if service.image %}
-                                <img src="{{ asset('uploads/services/' ~ service.image) }}" class="card-img-top" alt="{{ service.titre }}">
+                                <img src="{{ asset('uploads/services/' ~ service.image) }}" class="card-img-top" style="height: 200px; object-fit: cover;" alt="{{ service.titre }}">
                             {% endif %}
                             <div class="card-body">
                                 <h5 class="card-title">{{ service.titre }}</h5>
-                                <p class="card-text text-muted">{{ service.description }}</p>
+                                <p class="card-text text-muted small">{{ service.description }}</p>
                                 <a href="#" class="text-decoration-none fw-bold" style="color: #c95f83;">Découvrir</a>
                             </div>
                         </div>
@@ -69,6 +92,164 @@
                     <p class="text-center text-muted">Aucun soin publié pour le moment.</p>
                 {% endfor %}
             </div>
+            <div class="text-center mt-3">
+                <a href="#" class="btn btn-pink">Voir tous nos soins</a>
+            </div>
         </div>
     </section>
+
+    {# Produits phares #}
+    <section class="py-5">
+        <div class="container">
+            <h2 class="mb-2">Produits phares</h2>
+            <div class="mb-4"><span style="display:inline-block;width:40px;height:2px;background:#c95f83;"></span></div>
+            <div class="row">
+                {% for product in featuredProducts %}
+                    <div class="col-md-3 mb-4">
+                        <div class="card h-100 border-0 shadow-sm position-relative">
+                            {% if product.isNouveaute %}
+                                <span class="badge position-absolute top-0 start-0 m-2" style="background-color: #2d2d2d; z-index:1;">NOUVEAU</span>
+                            {% endif %}
+                            {% if product.prixPromo %}
+                                {% set discount = ((product.prix - product.prixPromo) / product.prix * 100)|round %}
+                                <span class="badge bg-danger position-absolute top-0 start-0 m-2 mt-5" style="z-index:1;">-{{ discount }}%</span>
+                            {% endif %}
+                            <a href="{{ path('app_front_product_show', {slug: product.slug}) }}" class="text-decoration-none text-dark">
+                                <div class="text-center p-3">
+                                    {% if product.mainImage %}
+                                        <img src="{{ asset('uploads/products/' ~ product.mainImage.filename) }}" class="img-fluid" style="max-height: 150px; object-fit: contain;" alt="{{ product.nom }}">
+                                    {% endif %}
+                                </div>
+                                <div class="card-body text-center pt-0">
+                                    <h6 class="card-title mb-1">{{ product.nom }}</h6>
+                                    {% if product.prixPromo %}
+                                        <p class="mb-0">
+                                            <span class="text-decoration-line-through text-muted small">{{ product.prix|number_format(2, ',', ' ') }} €</span>
+                                            <span class="fw-bold" style="color: #c95f83;">{{ product.prixPromo|number_format(2, ',', ' ') }} €</span>
+                                        </p>
+                                    {% else %}
+                                        <p class="fw-bold mb-0" style="color: #c95f83;">{{ product.prix|number_format(2, ',', ' ') }} €</p>
+                                    {% endif %}
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                {% else %}
+                    <p class="text-center text-muted">Aucun produit mis en avant pour le moment.</p>
+                {% endfor %}
+            </div>
+            <div class="text-center mt-3">
+                <a href="{{ path('app_front_product_index') }}" class="btn btn-pink">Voir toute la boutique</a>
+            </div>
+        </div>
+    </section>
+
+    {# Avis / Avant-Après / Blog #}
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="row">
+
+                {# Avis clients #}
+                <div class="col-md-4 mb-4">
+                    <h4 class="mb-2">Avis de nos clientes</h4>
+                    <div class="mb-4"><span style="display:inline-block;width:40px;height:2px;background:#c95f83;"></span></div>
+                    {% if reviews|length > 0 %}
+                        {% for review in reviews %}
+                            <div class="card border-0 shadow-sm mb-3">
+                                <div class="card-body">
+                                    <div class="mb-1">
+                                        {% for i in 1..5 %}{{ i <= review.note ? '⭐' : '☆' }}{% endfor %}
+                                    </div>
+                                    <p class="text-muted small fst-italic mb-1">"{{ review.commentaire }}"</p>
+                                    <p class="small fw-bold mb-0">{{ review.client.prenom }} {{ review.client.nom[0] }}.</p>
+                                </div>
+                            </div>
+                        {% endfor %}
+                        <a href="#" class="text-decoration-none fw-bold small" style="color: #c95f83;">Voir tous les avis →</a>
+                    {% else %}
+                        <p class="text-muted small">Aucun avis pour le moment.</p>
+                    {% endif %}
+                </div>
+
+                {# Avant / Après #}
+                <div class="col-md-4 mb-4">
+                    <h4 class="mb-2">Avant / Après</h4>
+                    <div class="mb-4"><span style="display:inline-block;width:40px;height:2px;background:#c95f83;"></span></div>
+                    {% if beforeAfters|length > 0 %}
+                        {% for ba in beforeAfters %}
+                            <div class="card border-0 shadow-sm mb-3">
+                                <div class="row g-0">
+                                    <div class="col-6">
+                                        <img src="{{ asset('uploads/before_after/' ~ ba.imageAvant) }}" class="img-fluid rounded-start" style="height: 120px; object-fit: cover; width: 100%;" alt="Avant">
+                                        <p class="text-center small text-muted mt-1 mb-0">Avant</p>
+                                    </div>
+                                    <div class="col-6">
+                                        <img src="{{ asset('uploads/before_after/' ~ ba.imageApres) }}" class="img-fluid rounded-end" style="height: 120px; object-fit: cover; width: 100%;" alt="Après">
+                                        <p class="text-center small text-muted mt-1 mb-0">Après</p>
+                                    </div>
+                                </div>
+                                {% if ba.titre %}
+                                    <div class="card-body py-2">
+                                        <p class="small fw-bold mb-0">{{ ba.titre }}</p>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                        <a href="#" class="text-decoration-none fw-bold small" style="color: #c95f83;">Voir la galerie →</a>
+                    {% else %}
+                        <p class="text-muted small">Aucune photo avant/après pour le moment.</p>
+                    {% endif %}
+                </div>
+
+                {# Blog #}
+                <div class="col-md-4 mb-4">
+                    <h4 class="mb-2">Nos derniers conseils</h4>
+                    <div class="mb-4"><span style="display:inline-block;width:40px;height:2px;background:#c95f83;"></span></div>
+                    {% if blogPosts|length > 0 %}
+                        {% for post in blogPosts %}
+                            <div class="mb-3">
+                                <p class="text-muted small mb-1 text-uppercase">{{ post.categorie }}</p>
+                                <h6 class="mb-1">{{ post.titre }}</h6>
+                                <a href="#" class="text-decoration-none small" style="color: #c95f83;">Lire l'article →</a>
+                            </div>
+                            {% if not loop.last %}<hr>{% endif %}
+                        {% endfor %}
+                        <a href="#" class="text-decoration-none fw-bold small" style="color: #c95f83;">Voir tous les articles →</a>
+                    {% else %}
+                        <p class="text-muted small">Aucun article pour le moment.</p>
+                    {% endif %}
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    {# Bandeau final #}
+    <section class="py-4 border-top">
+        <div class="container">
+            <div class="row text-center">
+                <div class="col-md-3 mb-3 mb-md-0">
+                    <span style="font-size: 2rem;">🚚</span>
+                    <p class="fw-bold mb-0 mt-2 small">LIVRAISON OFFERTE</p>
+                    <p class="text-muted mb-0 small">Dès 70€ d'achat en France métropolitaine</p>
+                </div>
+                <div class="col-md-3 mb-3 mb-md-0">
+                    <span style="font-size: 2rem;">🏪</span>
+                    <p class="fw-bold mb-0 mt-2 small">RETRAIT EN BOUTIQUE</p>
+                    <p class="text-muted mb-0 small">À Angers sous 24/48h</p>
+                </div>
+                <div class="col-md-3 mb-3 mb-md-0">
+                    <span style="font-size: 2rem;">🔒</span>
+                    <p class="fw-bold mb-0 mt-2 small">PAIEMENT SÉCURISÉ</p>
+                    <p class="text-muted mb-0 small">Stripe, Apple Pay, Google Pay, CB</p>
+                </div>
+                <div class="col-md-3">
+                    <span style="font-size: 2rem;">💬</span>
+                    <p class="fw-bold mb-0 mt-2 small">SERVICE CLIENT</p>
+                    <p class="text-muted mb-0 small">À votre écoute du lundi au samedi</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
 {% endblock %}
