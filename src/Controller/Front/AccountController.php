@@ -3,6 +3,8 @@
 namespace App\Controller\Front;
 
 use App\Entity\Address;
+use App\Entity\Order;
+use App\Repository\OrderRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,6 +19,36 @@ final class AccountController extends AbstractController
     public function index(): Response
     {
         return $this->render('front/account/index.html.twig');
+    }
+
+    #[Route('/mon-compte/commandes', name: 'app_front_account_orders')]
+    public function orders(OrderRepository $orderRepository): Response
+    {
+        $user = $this->getUser();
+
+        $orders = $orderRepository->findBy(
+            ['client' => $user],
+            ['createdAt' => 'DESC']
+        );
+
+        return $this->render('front/account/orders.html.twig', [
+            'orders' => $orders,
+        ]);
+    }
+
+    #[Route('/mon-compte/commandes/{id}', name: 'app_front_account_order_show')]
+    public function orderShow(int $id, EntityManagerInterface $entityManager): Response
+    {
+        $user = $this->getUser();
+        $order = $entityManager->getRepository(Order::class)->find($id);
+
+        if (!$order || $order->getClient() !== $user) {
+            throw $this->createNotFoundException('Commande introuvable.');
+        }
+
+        return $this->render('front/account/order_show.html.twig', [
+            'order' => $order,
+        ]);
     }
 
     #[Route('/mon-compte/adresses', name: 'app_front_account_addresses')]
@@ -83,7 +115,6 @@ final class AccountController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // On utilise l'adresse comme libellé par défaut
             $address->setLabel($address->getRue());
             $entityManager->persist($address);
             $entityManager->flush();

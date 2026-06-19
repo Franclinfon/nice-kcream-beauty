@@ -1,0 +1,133 @@
+{% extends 'front/base.html.twig' %}
+
+{% block title %}Commande {{ order.numeroCommande }} — Nice K'Cream Beauty{% endblock %}
+
+{% block content %}
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-md-3 mb-4">
+                <div class="list-group">
+                    <a href="{{ path('app_front_account_index') }}" class="list-group-item list-group-item-action">
+                        Mon profil
+                    </a>
+                    <a href="{{ path('app_front_account_orders') }}" class="list-group-item list-group-item-action active" style="background-color: #e0769a; border-color: #e0769a;">
+                        Mes commandes
+                    </a>
+                    <a href="{{ path('app_front_account_addresses') }}" class="list-group-item list-group-item-action">
+                        Mes adresses
+                    </a>
+                    <a href="{{ path('app_logout') }}" class="list-group-item list-group-item-action text-danger">
+                        Se déconnecter
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-md-9">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1 class="mb-0">Commande {{ order.numeroCommande }}</h1>
+                    <a href="{{ path('app_front_account_orders') }}" class="btn btn-outline-dark btn-sm">← Retour</a>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-body">
+                                <h6 class="fw-bold mb-3">Informations</h6>
+                                <p class="mb-1 text-muted small">Date : <strong>{{ order.createdAt|date('d/m/Y à H:i') }}</strong></p>
+                                <p class="mb-1 text-muted small">
+                                    Statut :
+                                    {% if order.statut == 'payee' %}
+                                        <span class="badge bg-success">Payée</span>
+                                    {% elseif order.statut == 'en_attente_paiement' %}
+                                        <span class="badge bg-warning text-dark">En attente de paiement</span>
+                                    {% elseif order.statut == 'en_preparation' %}
+                                        <span class="badge bg-info text-dark">En préparation</span>
+                                    {% elseif order.statut == 'expediee' %}
+                                        <span class="badge bg-primary">Expédiée</span>
+                                    {% elseif order.statut == 'livree' %}
+                                        <span class="badge bg-success">Livrée</span>
+                                    {% elseif order.statut == 'annulee' %}
+                                        <span class="badge bg-danger">Annulée</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">{{ order.statut }}</span>
+                                    {% endif %}
+                                </p>
+                                <p class="mb-0 text-muted small">
+                                    Livraison : <strong>{{ order.deliveryMethod == 'colissimo' ? 'Colissimo' : 'Retrait en boutique' }}</strong>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-body">
+                                <h6 class="fw-bold mb-3">Adresse de livraison</h6>
+                                <p class="text-muted small mb-0">
+                                    {{ order.livraisonNom }}<br>
+                                    {{ order.livraisonRue }}
+                                    {% if order.livraisonComplement %}, {{ order.livraisonComplement }}{% endif %}<br>
+                                    {{ order.livraisonCodePostal }} {{ order.livraisonVille }}<br>
+                                    {{ order.livraisonPays }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-body">
+                        <h6 class="fw-bold mb-3">Articles commandés</h6>
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Produit</th>
+                                    <th class="text-end">Prix unitaire</th>
+                                    <th class="text-end">Quantité</th>
+                                    <th class="text-end">Sous-total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in order.orderItems %}
+                                    <tr>
+                                        <td>{{ item.nomProduit }}</td>
+                                        <td class="text-end">{{ item.prixUnitaire|number_format(2, ',', ' ') }} €</td>
+                                        <td class="text-end">{{ item.quantite }}</td>
+                                        <td class="text-end">{{ (item.prixUnitaire * item.quantite)|number_format(2, ',', ' ') }} €</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <hr>
+                        <div class="d-flex justify-content-between text-muted">
+                            <span>Livraison</span>
+                            <span>{{ order.shippingCost > 0 ? order.shippingCost|number_format(2, ',', ' ') ~ ' €' : 'Gratuite' }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between fw-bold fs-5 mt-2">
+                            <span>Total</span>
+                            <span style="color: #c95f83;">{{ order.montantTotal|number_format(2, ',', ' ') }} €</span>
+                        </div>
+                    </div>
+                </div>
+
+                {% if order.orderStatusHistories|length > 0 %}
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body">
+                            <h6 class="fw-bold mb-3">Historique du statut</h6>
+                            <ul class="list-unstyled mb-0">
+                                {% for history in order.orderStatusHistories %}
+                                    <li class="d-flex gap-3 mb-2">
+                                        <span class="text-muted small">{{ history.date|date('d/m/Y H:i') }}</span>
+                                        <span class="small">{{ history.statut }}</span>
+                                        {% if history.commentaire %}
+                                            <span class="text-muted small fst-italic">— {{ history.commentaire }}</span>
+                                        {% endif %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
