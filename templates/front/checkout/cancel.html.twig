@@ -1,0 +1,24 @@
+{% extends 'front/base.html.twig' %}
+
+{% block title %}Paiement annulé — Nice K'Cream Beauty{% endblock %}
+
+{% block content %}
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6 text-center">
+
+                <div class="mb-4" style="font-size: 4rem;">😕</div>
+                <h1 class="mb-3">Paiement annulé</h1>
+                <p class="lead text-muted mb-4">
+                    Vous avez annulé le paiement de la commande <strong>{{ order.numeroCommande }}</strong>.<br>
+                    Votre panier est toujours disponible, vous pouvez reprendre votre commande quand vous le souhaitez.
+                </p>
+
+                <div class="d-flex gap-3 justify-content-center">
+                    <a href="{{ path('app_front_cart_index') }}" class="btn btn-pink btn-lg">Retourner au panier</a>
+                    <a href="{{ path('app_front_home') }}" class="btn btn-outline-dark btn-lg">Retour à l'accueil</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

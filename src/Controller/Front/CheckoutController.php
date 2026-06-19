@@ -9,15 +9,23 @@ use App\Repository\AddressRepository;
 use App\Service\CartService;
 use App\Service\CheckoutService;
 use Doctrine\ORM\EntityManagerInterface;
+use Stripe\Checkout\Session as StripeSession;
+use Stripe\Stripe;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[IsGranted('ROLE_USER')]
 final class CheckoutController extends AbstractController
 {
+    public function __construct(
+        private string $stripeSecretKey,
+    ) {
+    }
+
     #[Route('/commande/adresse', name: 'app_front_checkout_address')]
     public function address(Request $request, AddressRepository $addressRepository, CheckoutService $checkoutService, CartService $cartService): Response
     {
@@ -93,7 +101,6 @@ final class CheckoutController extends AbstractController
         $shippingCost = $checkoutService->calculateShippingCost($deliveryMethod, $cartTotal);
 
         if ($request->isMethod('POST')) {
-            // Évite les doublons si une commande en attente existe déjà pour cette session
             $pendingOrderId = $checkoutService->getPendingOrderId();
             $existingOrder = $pendingOrderId
                 ? $entityManager->getRepository(Order::class)->find($pendingOrderId)
@@ -111,14 +118,13 @@ final class CheckoutController extends AbstractController
             $order->setDeliveryMethod($deliveryMethod);
             $order->setShippingCost((string) $shippingCost);
 
-            // Snapshot de l'adresse de livraison
             $order->setLivraisonNom($user->getNom() . ' ' . $user->getPrenom());
             $order->setLivraisonRue($address->getRue());
             $order->setLivraisonComplement($address->getComplement());
             $order->setLivraisonCodePostal($address->getCodePostal());
             $order->setLivraisonVille($address->getVille());
             $order->setLivraisonPays($address->getPays());
-            $order->setLivraisonTelephone($user->getTelephone());
+            $order->setLivraisonTelephone($user->getTelephone() ?? '');
             $order->setLivraisonEmail($user->getEmail());
 
             foreach ($cartItems as $item) {
@@ -145,6 +151,102 @@ final class CheckoutController extends AbstractController
             'cartTotal' => $cartTotal,
             'shippingCost' => $shippingCost,
             'grandTotal' => $cartTotal + $shippingCost,
+        ]);
+    }
+
+    #[Route('/commande/paiement/{id}', name: 'app_front_checkout_payment')]
+    public function payment(
+        int $id,
+        EntityManagerInterface $entityManager,
+    ): Response {
+        $order = $entityManager->getRepository(Order::class)->find($id);
+        $user = $this->getUser();
+
+        if (!$order || $order->getClient() !== $user || $order->getStatut() !== 'en_attente_paiement') {
+            return $this->redirectToRoute('app_front_home');
+        }
+
+        Stripe::setApiKey($this->stripeSecretKey);
+
+        $lineItems = [];
+
+        foreach ($order->getOrderItems() as $item) {
+            $lineItems[] = [
+                'price_data' => [
+                    'currency' => 'eur',
+                    'product_data' => [
+                        'name' => $item->getNomProduit(),
+                    ],
+                    'unit_amount' => (int) round((float) $item->getPrixUnitaire() * 100),
+                ],
+                'quantity' => $item->getQuantite(),
+            ];
+        }
+
+        if ((float) $order->getShippingCost() > 0) {
+            $lineItems[] = [
+                'price_data' => [
+                    'currency' => 'eur',
+                    'product_data' => [
+                        'name' => 'Livraison Colissimo',
+                    ],
+                    'unit_amount' => (int) round((float) $order->getShippingCost() * 100),
+                ],
+                'quantity' => 1,
+            ];
+        }
+
+        $session = StripeSession::create([
+            'payment_method_types' => ['card'],
+            'line_items' => $lineItems,
+            'mode' => 'payment',
+            'customer_email' => $user->getEmail(),
+            'success_url' => $this->generateUrl('app_front_checkout_success', ['id' => $order->getId()], UrlGeneratorInterface::ABSOLUTE_URL),
+            'cancel_url' => $this->generateUrl('app_front_checkout_cancel', ['id' => $order->getId()], UrlGeneratorInterface::ABSOLUTE_URL),
+            'metadata' => [
+                'order_id' => $order->getId(),
+                'order_numero' => $order->getNumeroCommande(),
+            ],
+        ]);
+
+        $order->setStripePaymentIntentId($session->id);
+        $entityManager->flush();
+
+        return $this->redirect($session->url, 303);
+    }
+
+    #[Route('/commande/succes/{id}', name: 'app_front_checkout_success')]
+    public function success(int $id, EntityManagerInterface $entityManager, CartService $cartService, CheckoutService $checkoutService): Response
+    {
+        $order = $entityManager->getRepository(Order::class)->find($id);
+        $user = $this->getUser();
+
+        if (!$order || $order->getClient() !== $user) {
+            return $this->redirectToRoute('app_front_home');
+        }
+
+        if ($order->getStatut() === 'payee') {
+            $cartService->clear();
+            $checkoutService->clear();
+        }
+
+        return $this->render('front/checkout/success.html.twig', [
+            'order' => $order,
+        ]);
+    }
+
+    #[Route('/commande/annule/{id}', name: 'app_front_checkout_cancel')]
+    public function cancel(int $id, EntityManagerInterface $entityManager): Response
+    {
+        $order = $entityManager->getRepository(Order::class)->find($id);
+        $user = $this->getUser();
+
+        if (!$order || $order->getClient() !== $user) {
+            return $this->redirectToRoute('app_front_home');
+        }
+
+        return $this->render('front/checkout/cancel.html.twig', [
+            'order' => $order,
         ]);
     }
 }
