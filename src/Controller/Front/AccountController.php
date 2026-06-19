@@ -37,18 +37,54 @@ final class AccountController extends AbstractController
         $address->setClient($user);
 
         $form = $this->createFormBuilder($address)
-            ->add('label')
-            ->add('rue')
-            ->add('complement', null, ['required' => false])
-            ->add('codePostal', null, ['label' => 'Code postal'])
-            ->add('ville')
-            ->add('pays')
-            ->add('isDefault', null, ['label' => 'Adresse par défaut', 'required' => false])
+            ->add('rue', null, [
+                'label' => 'Adresse',
+                'attr' => [
+                    'placeholder' => 'Ex : 1 rue Léon Pavot',
+                    'class' => 'form-control',
+                ],
+            ])
+            ->add('complement', null, [
+                'label' => 'Complément d\'adresse (optionnel)',
+                'required' => false,
+                'attr' => [
+                    'placeholder' => 'Ex : Bât. B, Appt 12',
+                    'class' => 'form-control',
+                ],
+            ])
+            ->add('codePostal', null, [
+                'label' => 'Code postal',
+                'attr' => [
+                    'placeholder' => 'Ex : 49100',
+                    'class' => 'form-control',
+                ],
+            ])
+            ->add('ville', null, [
+                'label' => 'Ville',
+                'attr' => [
+                    'placeholder' => 'Ex : Angers',
+                    'class' => 'form-control',
+                ],
+            ])
+            ->add('pays', null, [
+                'label' => 'Pays',
+                'attr' => [
+                    'placeholder' => 'Ex : France',
+                    'class' => 'form-control',
+                ],
+            ])
+            ->add('isDefault', null, [
+                'label' => 'Définir comme adresse par défaut',
+                'required' => false,
+                'attr' => ['class' => 'form-check-input'],
+            ])
             ->getForm();
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // On utilise l'adresse comme libellé par défaut
+            $address->setLabel($address->getRue());
             $entityManager->persist($address);
             $entityManager->flush();
 

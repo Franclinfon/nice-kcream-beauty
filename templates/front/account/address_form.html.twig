@@ -5,20 +5,56 @@
 {% block content %}
     <div class="container py-5">
         <div class="row justify-content-center">
-            <div class="col-md-6">
-                <h1 class="mb-4">Ajouter une adresse</h1>
+            <div class="col-md-5">
+                <div class="card border-0 shadow-sm p-4">
+                    <h1 class="h3 mb-4 text-center">Ajouter une adresse</h1>
 
-                {{ form_start(form) }}
-                    {{ form_row(form.label, {label: 'Libellé (ex: Domicile, Bureau)'}) }}
-                    {{ form_row(form.rue, {label: 'Rue'}) }}
-                    {{ form_row(form.complement, {label: 'Complément (optionnel)'}) }}
-                    {{ form_row(form.codePostal) }}
-                    {{ form_row(form.ville, {label: 'Ville'}) }}
-                    {{ form_row(form.pays, {label: 'Pays'}) }}
-                    {{ form_row(form.isDefault) }}
+                    {{ form_start(form, {attr: {novalidate: 'novalidate'}}) }}
 
-                    <button type="submit" class="btn btn-pink btn-lg w-100 mt-3">Enregistrer l'adresse</button>
-                {{ form_end(form) }}
+                        <div class="mb-3">
+                            {{ form_label(form.rue) }}
+                            {{ form_widget(form.rue, {attr: {placeholder: 'Ex : 1 rue Léon Pavot', class: 'form-control'}}) }}
+                            {{ form_errors(form.rue) }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form_label(form.complement) }}
+                            {{ form_widget(form.complement, {attr: {placeholder: '', class: 'form-control'}}) }}
+                            {{ form_errors(form.complement) }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form_label(form.ville) }}
+                            {{ form_widget(form.ville, {attr: {placeholder: '', class: 'form-control'}}) }}
+                            {{ form_errors(form.ville) }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form_label(form.codePostal) }}
+                            {{ form_widget(form.codePostal, {attr: {placeholder: '', class: 'form-control'}}) }}
+                            {{ form_errors(form.codePostal) }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form_label(form.pays) }}
+                            {{ form_widget(form.pays, {attr: {placeholder: '', class: 'form-control'}}) }}
+                            {{ form_errors(form.pays) }}
+                        </div>
+
+                        <div class="mb-4 form-check">
+                            {{ form_widget(form.isDefault) }}
+                            {{ form_label(form.isDefault) }}
+                            {{ form_errors(form.isDefault) }}
+                        </div>
+
+                        <button type="submit" class="btn btn-pink btn-lg w-100">Enregistrer l'adresse</button>
+
+                    {{ form_end(form) }}
+
+                    <p class="text-center mt-3 mb-0">
+                        <a href="{{ path('app_front_account_addresses') }}" class="text-muted text-decoration-none small">← Retour à mes adresses</a>
+                    </p>
+                </div>
             </div>
         </div>
     </div>

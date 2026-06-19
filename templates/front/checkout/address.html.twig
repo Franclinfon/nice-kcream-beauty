@@ -1,0 +1,49 @@
+{% extends 'front/base.html.twig' %}
+
+{% block title %}Adresse de livraison — Nice K'Cream Beauty{% endblock %}
+
+{% block content %}
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-7">
+                <h1 class="mb-4">Adresse de livraison</h1>
+
+                <div class="d-flex justify-content-between mb-4 text-muted small">
+                    <span class="fw-bold" style="color: #c95f83;">1. Adresse</span>
+                    <span>2. Livraison</span>
+                    <span>3. Récapitulatif</span>
+                    <span>4. Paiement</span>
+                </div>
+
+                {% if addresses|length > 0 %}
+                    <form method="post">
+                        {% for address in addresses %}
+                            <div class="card border-0 shadow-sm mb-3">
+                                <div class="card-body">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="address_id" value="{{ address.id }}" id="address_{{ address.id }}"
+                                            {{ selectedAddressId == address.id or (selectedAddressId is null and loop.first) ? 'checked' : '' }} required>
+                                        <label class="form-check-label" for="address_{{ address.id }}">
+                                            <strong>{{ address.label }}</strong><br>
+                                            {{ address.rue }}{% if address.complement %}, {{ address.complement }}{% endif %}<br>
+                                            {{ address.codePostal }} {{ address.ville }}, {{ address.pays }}
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+
+                        <p class="text-center mt-3">
+                            <a href="{{ path('app_front_account_address_new') }}" class="text-decoration-none" style="color: #c95f83;">+ Ajouter une nouvelle adresse</a>
+                        </p>
+
+                        <button type="submit" class="btn btn-pink btn-lg w-100 mt-2">Continuer</button>
+                    </form>
+                {% else %}
+                    <p class="text-muted">Vous n'avez aucune adresse enregistrée.</p>
+                    <a href="{{ path('app_front_account_address_new') }}" class="btn btn-pink btn-lg w-100">Ajouter une adresse</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

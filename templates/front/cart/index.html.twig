@@ -55,8 +55,10 @@
             <div class="d-flex justify-content-end mt-4">
                 <div class="text-end">
                     <h4>Total : <span style="color: #c95f83;">{{ total|number_format(2, ',', ' ') }} €</span></h4>
-                    <a href="{{ path('app_front_product_index') }}" class="btn btn-outline-dark mt-2">Continuer mes achats</a>
-                    <a href="#" class="btn btn-pink mt-2">Passer la commande</a>
+                    <div class="d-flex gap-3 mt-3">
+                        <a href="{{ path('app_front_product_index') }}" class="btn btn-outline-dark btn-lg">Continuer mes achats</a>
+                        <a href="{{ path('app_front_checkout_address') }}" class="btn btn-pink btn-lg">Passer la commande</a>
+                    </div>
                 </div>
             </div>
         {% else %}
