@@ -28,7 +28,7 @@
                                 <td>
                                     <div class="d-flex align-items-center gap-3">
                                         {% if item.product.mainImage %}
-                                            <img src="{{ asset('uploads/products/' ~ item.product.mainImage.filename) }}" style="width: 60px; height: 60px; object-fit: cover;" class="rounded" alt="{{ item.product.nom }}">
+                                            <img src="{{ asset('uploads/products/' ~ item.product.mainImage.filename) }}" style="width: 60px; height: 60px; object-fit: contain; background: #f8f8f8;" class="rounded" alt="{{ item.product.nom }}">
                                         {% endif %}
                                         <span>{{ item.product.nom }}</span>
                                     </div>

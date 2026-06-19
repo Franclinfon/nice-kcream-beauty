@@ -8,60 +8,136 @@
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ path('app_front_home') }}">Accueil</a></li>
                 <li class="breadcrumb-item"><a href="{{ path('app_front_product_index') }}">Boutique</a></li>
+                {% if product.category %}
+                    <li class="breadcrumb-item">
+                        <a href="{{ path('app_front_product_index', {categorie: product.category.slug}) }}">{{ product.category.nom }}</a>
+                    </li>
+                {% endif %}
                 <li class="breadcrumb-item active">{{ product.nom }}</li>
             </ol>
         </nav>
 
         <div class="row">
+            {# Colonne galerie #}
             <div class="col-md-6 mb-4">
-                {% if product.mainImage %}
-                    <img src="{{ asset('uploads/products/' ~ product.mainImage.filename) }}" class="img-fluid rounded shadow-sm" alt="{{ product.nom }}">
-                {% endif %}
+                <div class="position-relative">
+                    {# Badges #}
+                    <div class="position-absolute top-0 start-0 p-3 d-flex flex-column gap-2" style="z-index: 1;">
+                        {% if product.isNouveaute %}
+                            <span class="badge fs-6" style="background-color: #2d2d2d;">NOUVEAU</span>
+                        {% endif %}
+                        {% if product.prixPromo %}
+                            {% set discount = ((product.prix - product.prixPromo) / product.prix * 100)|round %}
+                            <span class="badge bg-danger fs-6">-{{ discount }}%</span>
+                        {% endif %}
+                    </div>
 
+                    {# Image principale #}
+                    <img id="mainProductImage"
+                        src="{{ product.mainImage ? asset('uploads/products/' ~ product.mainImage.filename) : '' }}"
+                        class="img-fluid rounded shadow-sm"
+                        style="max-height: 450px; object-fit: contain; width: 100%; background: #f8f8f8; padding: 20px;"
+                        alt="{{ product.nom }}">
+                </div>
+
+                {# Miniatures #}
                 {% if product.productImages|length > 1 %}
-                    <div class="d-flex gap-2 mt-3">
+                    <div class="d-flex gap-2 mt-3 flex-wrap">
                         {% for image in product.productImages %}
-                            <img src="{{ asset('uploads/products/' ~ image.filename) }}" class="rounded border" style="width: 70px; height: 70px; object-fit: cover; cursor: pointer;" alt="{{ product.nom }}">
+                            <img src="{{ asset('uploads/products/' ~ image.filename) }}"
+                                class="rounded border thumbnail-img {{ image.isMain ? 'border-dark' : '' }}"
+                                style="width: 75px; height: 75px; object-fit: cover; cursor: pointer; opacity: {{ image.isMain ? '1' : '0.6' }};"
+                                alt="{{ product.nom }}"
+                                onclick="changeImage(this)">
                         {% endfor %}
                     </div>
                 {% endif %}
             </div>
 
+            {# Colonne infos #}
             <div class="col-md-6">
-                <h1 class="mb-2">{{ product.nom }}</h1>
-                <p class="text-muted">{{ product.category.nom }}</p>
+                <p class="text-muted mb-1">{{ product.category.nom }}</p>
+                <h1 class="mb-3">{{ product.nom }}</h1>
 
+                {# Prix #}
                 {% if product.prixPromo %}
-                    <p class="mb-1">
-                        <span class="text-decoration-line-through text-muted">{{ product.prix|number_format(2, ',', ' ') }} €</span>
-                        <span class="fw-bold fs-4 ms-2" style="color: #c95f83;">{{ product.prixPromo|number_format(2, ',', ' ') }} €</span>
-                    </p>
+                    <div class="mb-3">
+                        <span class="text-decoration-line-through text-muted fs-5">{{ product.prix|number_format(2, ',', ' ') }} €</span>
+                        <span class="fw-bold fs-3 ms-2" style="color: #c95f83;">{{ product.prixPromo|number_format(2, ',', ' ') }} €</span>
+                    </div>
                 {% else %}
-                    <p class="fw-bold fs-4" style="color: #c95f83;">{{ product.prix|number_format(2, ',', ' ') }} €</p>
+                    <p class="fw-bold fs-3 mb-3" style="color: #c95f83;">{{ product.prix|number_format(2, ',', ' ') }} €</p>
                 {% endif %}
 
+                {# Stock #}
                 {% if product.isRupture %}
-                    <p class="badge bg-secondary">Rupture de stock</p>
+                    <span class="badge bg-secondary mb-3">Rupture de stock</span>
+                {% elseif product.stockQuantity is not null and product.stockQuantity <= 5 %}
+                    <span class="badge bg-warning text-dark mb-3">Plus que {{ product.stockQuantity }} en stock</span>
                 {% endif %}
 
-                <p class="mt-3">{{ product.description }}</p>
+                {# Description #}
+                {% if product.description %}
+                    <p class="mt-3 text-muted">{{ product.description }}</p>
+                {% endif %}
 
+                {# Conseils d'utilisation #}
                 {% if product.conseilsUtilisation %}
-                    <h6 class="mt-4">Conseils d'utilisation</h6>
-                    <p class="text-muted">{{ product.conseilsUtilisation }}</p>
+                    <div class="mt-4 p-3 bg-light rounded">
+                        <h6 class="fw-bold mb-2">💡 Conseils d'utilisation</h6>
+                        <p class="text-muted mb-0">{{ product.conseilsUtilisation }}</p>
+                    </div>
                 {% endif %}
 
-                {% if not product.isRupture %}
-                    <form action="{{ path('app_front_cart_add', {id: product.id}) }}" method="post" class="d-flex gap-2 align-items-center mt-3">
-                        <input type="number" name="quantity" value="1" min="1" class="form-control" style="width: 80px;">
-                        <button type="submit" class="btn btn-pink btn-lg">Ajouter au panier</button>
-                    </form>
-                {% else %}
-                    <button class="btn btn-pink btn-lg mt-3" disabled>Ajouter au panier</button>
-                {% endif %}
+                {# Bouton panier #}
+                <div class="mt-4">
+                    {% if not product.isRupture %}
+                        <form action="{{ path('app_front_cart_add', {id: product.id}) }}" method="post" class="d-flex gap-2 align-items-center">
+                            <input type="number" name="quantity" value="1" min="1"
+                                {% if product.stockQuantity %}max="{{ product.stockQuantity }}"{% endif %}
+                                class="form-control" style="width: 85px;">
+                            <button type="submit" class="btn btn-pink btn-lg flex-grow-1">🛒 Ajouter au panier</button>
+                        </form>
+                    {% else %}
+                        <button class="btn btn-secondary btn-lg w-100" disabled>Rupture de stock</button>
+                    {% endif %}
+                </div>
+
+                {# Infos livraison #}
+                <div class="mt-4 border-top pt-3">
+                    <p class="small text-muted mb-1">🚚 Livraison Colissimo offerte dès 70 €</p>
+                    <p class="small text-muted mb-0">🏪 Retrait gratuit en boutique à Angers sous 24/48h</p>
+                </div>
             </div>
         </div>
 
+        {# Avis clients #}
+        {% set approvedReviews = product.reviews|filter(r => r.statut == 'approuve') %}
+        {% if approvedReviews|length > 0 %}
+            <hr class="my-5">
+            <h3 class="mb-4">Avis clients ({{ approvedReviews|length }})</h3>
+            <div class="row">
+                {% for review in approvedReviews %}
+                    <div class="col-md-6 mb-3">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <strong>{{ review.client.prenom }} {{ review.client.nom[0] }}.</strong>
+                                    <span>
+                                        {% for i in 1..5 %}
+                                            {{ i <= review.note ? '⭐' : '☆' }}
+                                        {% endfor %}
+                                    </span>
+                                </div>
+                                <p class="text-muted mb-0">{{ review.commentaire }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {# Produits associés #}
         {% if product.relatedProducts|length > 0 %}
             <hr class="my-5">
             <h3 class="mb-4">Vous pourriez aussi aimer</h3>
@@ -71,11 +147,19 @@
                         <div class="card h-100 border-0 shadow-sm">
                             <a href="{{ path('app_front_product_show', {slug: related.slug}) }}" class="text-decoration-none text-dark">
                                 {% if related.mainImage %}
-                                    <img src="{{ asset('uploads/products/' ~ related.mainImage.filename) }}" class="card-img-top" alt="{{ related.nom }}">
+                                    <img src="{{ asset('uploads/products/' ~ related.mainImage.filename) }}"
+                                        class="card-img-top" style="height: 180px; object-fit: cover;" alt="{{ related.nom }}">
                                 {% endif %}
                                 <div class="card-body text-center">
                                     <h6 class="card-title">{{ related.nom }}</h6>
-                                    <p class="fw-bold" style="color: #c95f83;">{{ related.prix|number_format(2, ',', ' ') }} €</p>
+                                    {% if related.prixPromo %}
+                                        <p class="mb-0">
+                                            <span class="text-decoration-line-through text-muted small">{{ related.prix|number_format(2, ',', ' ') }} €</span>
+                                            <span class="fw-bold ms-1" style="color: #c95f83;">{{ related.prixPromo|number_format(2, ',', ' ') }} €</span>
+                                        </p>
+                                    {% else %}
+                                        <p class="fw-bold mb-0" style="color: #c95f83;">{{ related.prix|number_format(2, ',', ' ') }} €</p>
+                                    {% endif %}
                                 </div>
                             </a>
                         </div>
@@ -84,4 +168,16 @@
             </div>
         {% endif %}
     </div>
+
+    <script>
+        function changeImage(thumbnail) {
+            document.getElementById('mainProductImage').src = thumbnail.src;
+            document.querySelectorAll('.thumbnail-img').forEach(img => {
+                img.style.opacity = '0.6';
+                img.classList.remove('border-dark');
+            });
+            thumbnail.style.opacity = '1';
+            thumbnail.classList.add('border-dark');
+        }
+    </script>
 {% endblock %}
