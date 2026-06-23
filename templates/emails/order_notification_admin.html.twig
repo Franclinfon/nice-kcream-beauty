@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Nouvelle commande</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f5f5f5; margin: 0; padding: 0; color: #1a1a1a; }
+        .wrapper { max-width: 600px; margin: 40px auto; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 20px rgba(0,0,0,0.06); }
+        .header { background-color: #1a1a1a; padding: 24px 40px; }
+        .header h1 { color: #c95f83; font-size: 1.2rem; margin: 0; }
+        .header p { color: rgba(255,255,255,0.6); font-size: 0.8rem; margin: 4px 0 0; }
+        .body { padding: 32px 40px; }
+        .alert { background: #fdf0f4; border-left: 4px solid #c95f83; padding: 12px 16px; border-radius: 4px; margin-bottom: 24px; font-size: 0.95rem; }
+        .section-title { font-size: 0.72rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #c95f83; margin: 24px 0 10px; border-bottom: 1px solid #f0f0f0; padding-bottom: 6px; }
+        table { width: 100%; border-collapse: collapse; }
+        table th { text-align: left; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: #6b7280; padding: 8px 0; border-bottom: 1px solid #f0f0f0; }
+        table td { padding: 10px 0; font-size: 0.9rem; border-bottom: 1px solid #f9f9f9; }
+        .total { font-size: 1.1rem; font-weight: 700; color: #c95f83; text-align: right; margin-top: 12px; }
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .info-box { background: #f9fafb; border-radius: 6px; padding: 14px 16px; font-size: 0.85rem; line-height: 1.7; }
+        .info-box strong { display: block; font-size: 0.72rem; letter-spacing: 1px; text-transform: uppercase; color: #6b7280; margin-bottom: 4px; }
+        .footer { background-color: #f9fafb; padding: 16px 40px; text-align: center; }
+        .footer p { color: #9ca3af; font-size: 0.75rem; margin: 0; }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+
+        <div class="header">
+            <h1>🛍 Nouvelle commande reçue</h1>
+            <p>Nice K'Cream Beauty — Back-office</p>
+        </div>
+
+        <div class="body">
+            <div class="alert">
+                Commande <strong>{{ order.numeroCommande }}</strong> — <strong>{{ order.montantTotal|number_format(2, ',', ' ') }} €</strong> — {{ order.createdAt|date('d/m/Y à H:i') }}
+            </div>
+
+            <p class="section-title">Client</p>
+            <div class="info-grid">
+                <div class="info-box">
+                    <strong>Nom</strong>
+                    {{ order.livraisonNom }}
+                </div>
+                <div class="info-box">
+                    <strong>Email</strong>
+                    {{ order.livraisonEmail }}
+                </div>
+                <div class="info-box">
+                    <strong>Téléphone</strong>
+                    {{ order.livraisonTelephone ?: 'Non renseigné' }}
+                </div>
+                <div class="info-box">
+                    <strong>Livraison</strong>
+                    {% if order.deliveryMethod == 'colissimo' %}🚚 Colissimo{% else %}🏪 Retrait boutique{% endif %}
+                </div>
+            </div>
+
+            <p class="section-title">Adresse de livraison</p>
+            <div class="info-box" style="grid-column: span 2;">
+                {{ order.livraisonRue }}<br>
+                {% if order.livraisonComplement %}{{ order.livraisonComplement }}<br>{% endif %}
+                {{ order.livraisonCodePostal }} {{ order.livraisonVille }}, {{ order.livraisonPays }}
+            </div>
+
+            <p class="section-title">Produits commandés</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Produit</th>
+                        <th style="text-align:center;">Qté</th>
+                        <th style="text-align:right;">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in order.orderItems %}
+                    <tr>
+                        <td>{{ item.nomProduit }}</td>
+                        <td style="text-align:center;">{{ item.quantite }}</td>
+                        <td style="text-align:right;">{{ (item.prixUnitaire * item.quantite)|number_format(2, ',', ' ') }} €</td>
+                    </tr>
+                    {% endfor %}
+                    <tr>
+                        <td colspan="2" style="text-align:right; color:#6b7280; font-size:0.85rem;">Livraison</td>
+                        <td style="text-align:right;">
+                            {% if order.shippingCost > 0 %}{{ order.shippingCost|number_format(2, ',', ' ') }} €{% else %}Gratuite{% endif %}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <p class="total">Total : {{ order.montantTotal|number_format(2, ',', ' ') }} €</p>
+        </div>
+
+        <div class="footer">
+            <p>Email automatique — Nice K'Cream Beauty</p>
+        </div>
+
+    </div>
+</body>
+</html>

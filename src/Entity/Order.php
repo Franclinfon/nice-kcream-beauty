@@ -69,13 +69,13 @@ class Order
     /**
      * @var Collection<int, OrderItem>
      */
-    #[ORM\OneToMany(targetEntity: OrderItem::class, mappedBy: 'commande', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: OrderItem::class, mappedBy: 'commande', cascade: ['persist'], orphanRemoval: true)]
     private Collection $orderItems;
 
     /**
      * @var Collection<int, OrderStatusHistory>
      */
-    #[ORM\OneToMany(targetEntity: OrderStatusHistory::class, mappedBy: 'commande', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: OrderStatusHistory::class, mappedBy: 'commande', cascade: ['persist'], orphanRemoval: true)]
     private Collection $orderStatusHistories;
 
     public function __construct()
@@ -304,7 +304,6 @@ class Order
     public function removeOrderItem(OrderItem $orderItem): static
     {
         if ($this->orderItems->removeElement($orderItem)) {
-            // set the owning side to null (unless already changed)
             if ($orderItem->getCommande() === $this) {
                 $orderItem->setCommande(null);
             }
@@ -334,12 +333,16 @@ class Order
     public function removeOrderStatusHistory(OrderStatusHistory $orderStatusHistory): static
     {
         if ($this->orderStatusHistories->removeElement($orderStatusHistory)) {
-            // set the owning side to null (unless already changed)
             if ($orderStatusHistory->getCommande() === $this) {
                 $orderStatusHistory->setCommande(null);
             }
         }
 
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->numeroCommande ?? 'Commande #' . $this->id;
     }
 }

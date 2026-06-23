@@ -5,66 +5,164 @@
 {% block content %}
 
     {# Hero #}
-    <section class="bg-light py-5">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-6">
-                    <h1 class="display-4 fw-bold" style="color: #c95f83;">L'Essence d'une Peau Éclatante</h1>
-                    <p class="lead text-muted">Soins experts, produits coréens sélectionnés pour leur efficacité, leur innovation et le respect de votre peau.</p>
-                    <div class="d-flex gap-3 mt-4">
-                        <a href="{{ path('app_front_product_index') }}" class="btn btn-pink btn-lg">Découvrir la boutique</a>
-                        <a href="#" class="btn btn-outline-dark btn-lg">Réserver un soin</a>
+    <section class="hero-section position-relative overflow-hidden">
+
+        {# Image de fond #}
+        <div class="hero-bg" style="background-image: url('{{ asset('images/hero-banner.png') }}');"></div>
+
+        {# Overlay dégradé pour lisibilité du texte #}
+        <div class="hero-overlay"></div>
+
+        <div class="container position-relative" style="z-index: 2;">
+            <div class="row align-items-center" style="min-height: 560px;">
+                <div class="col-lg-5 py-5">
+
+                    {# Titre deux lignes #}
+                    <h1 class="hero-title mb-3">
+                        <span class="hero-title-rose">L'Essence</span><br>
+                        <span class="hero-title-noir">d'une Peau Éclatante</span>
+                    </h1>
+
+                    <p class="hero-subtitle mb-5">
+                        Soins experts, produits coréens sélectionnés<br>
+                        pour leur efficacité, leur innovation<br>
+                        et le respect de votre peau.
+                    </p>
+
+                    <div class="d-flex gap-3 flex-wrap">
+                        <a href="{{ path('app_front_product_index') }}" class="btn btn-pink btn-hero d-flex align-items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                                <line x1="3" y1="6" x2="21" y2="6"/>
+                                <path d="M16 10a4 4 0 0 1-8 0"/>
+                            </svg>
+                            Découvrir la boutique
+                        </a>
+                        <a href="https://share.google/XNtyVAzeKl9r4qIEV" target="_blank" rel="noopener noreferrer" class="btn btn-outline-rose btn-hero d-flex align-items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                                <line x1="16" y1="2" x2="16" y2="6"/>
+                                <line x1="8" y1="2" x2="8" y2="6"/>
+                                <line x1="3" y1="10" x2="21" y2="10"/>
+                            </svg>
+                            Réserver un soin
+                        </a>
                     </div>
                 </div>
-                <div class="col-lg-6 text-center mt-4 mt-lg-0">
-                    <div class="bg-white rounded-3 shadow-sm p-5">
-                        <p class="text-muted mb-0">[Image produits à intégrer]</p>
-                    </div>
+            </div>
+        </div>
+
+        {# Badge circulaire #}
+        <div class="hero-badge">
+            <div class="hero-badge-inner">
+                <span class="hero-badge-icon">✦</span>
+                <span class="hero-badge-line1">ANALYSE DE PEAU</span>
+                <span class="hero-badge-line2">OFFERTE</span>
+                <span class="hero-badge-line3">EN BOUTIQUE</span>
+            </div>
+        </div>
+
+    </section>
+
+    {# Mini-bandeau sous le hero #}
+    <section class="hero-sub-banner py-3 bg-white border-bottom">
+        <div class="container">
+            <div class="row text-center g-3">
+                <div class="col-6 col-md-3 d-flex align-items-center justify-content-center gap-2">
+                    <span style="color: var(--rose);">✓</span>
+                    <span class="small">Produits 100% authentiques</span>
+                </div>
+                <div class="col-6 col-md-3 d-flex align-items-center justify-content-center gap-2">
+                    <span style="color: var(--rose);">✓</span>
+                    <span class="small">Livraison rapide Colissimo</span>
+                </div>
+                <div class="col-6 col-md-3 d-flex align-items-center justify-content-center gap-2">
+                    <span style="color: var(--rose);">✓</span>
+                    <span class="small">Paiement sécurisé</span>
+                </div>
+                <div class="col-6 col-md-3 d-flex align-items-center justify-content-center gap-2">
+                    <span style="color: var(--rose);">✓</span>
+                    <span class="small">Retrait en boutique gratuit</span>
                 </div>
             </div>
         </div>
     </section>
 
     {# Bandeau avantages #}
-    <section class="py-4 border-bottom border-top">
+    <section class="py-4" style="background-color: var(--rose-pale);">
         <div class="container">
-            <div class="row text-center">
-                <div class="col-md-3 mb-3 mb-md-0">
-                    <div class="d-flex align-items-center justify-content-center gap-2">
-                        <span style="font-size: 1.5rem;">🌿</span>
-                        <div class="text-start">
-                            <p class="fw-bold mb-0 small">SOINS EXPERTS</p>
-                            <p class="text-muted mb-0 small">Des protocoles ciblés pour répondre à chaque besoin de votre peau.</p>
+            <div class="row">
+
+                {# Soins experts #}
+                <div class="col-6 col-md-3 mb-3 mb-md-0">
+                    <div class="d-flex align-items-start gap-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; margin-top:2px;">
+                            <path d="M12 2a9 9 0 0 1 0 18A9 9 0 0 1 12 2z"/>
+                            <path d="M12 2c0 0-4 4-4 9s4 9 4 9"/>
+                            <path d="M12 2c0 0 4 4 4 9s-4 9-4 9"/>
+                            <path d="M3.6 9h16.8"/>
+                            <path d="M3.6 15h16.8"/>
+                        </svg>
+                        <div>
+                            <p class="mb-1" style="font-family: var(--font-corps); font-size: 0.72rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--noir);">SOINS EXPERTS</p>
+                            <p class="mb-0" style="font-family: var(--font-corps); font-size: 0.8rem; color: var(--gris); line-height: 1.5;">Des protocoles ciblés pour répondre à chaque besoin de votre peau.</p>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3 mb-3 mb-md-0">
-                    <div class="d-flex align-items-center justify-content-center gap-2">
-                        <span style="font-size: 1.5rem;">✨</span>
-                        <div class="text-start">
-                            <p class="fw-bold mb-0 small">EXPERTISE K-BEAUTY</p>
-                            <p class="text-muted mb-0 small">Des produits coréens rigoureusement sélectionnés pour des résultats visibles.</p>
+
+                {# Expertise K-Beauty #}
+                <div class="col-6 col-md-3 mb-3 mb-md-0">
+                    <div class="d-flex align-items-start gap-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; margin-top:2px;">
+                            <path d="M9 3H5a2 2 0 0 0-2 2v4"/>
+                            <path d="M9 3h6"/>
+                            <path d="M15 3h4a2 2 0 0 1 2 2v4"/>
+                            <path d="M3 9v6"/>
+                            <path d="M21 9v6"/>
+                            <path d="M3 15v2a2 2 0 0 0 2 2h4"/>
+                            <path d="M15 19h4a2 2 0 0 0 2-2v-2"/>
+                            <path d="M9 19h6"/>
+                            <circle cx="12" cy="11" r="2"/>
+                            <path d="M12 13v5"/>
+                        </svg>
+                        <div>
+                            <p class="mb-1" style="font-family: var(--font-corps); font-size: 0.72rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--noir);">EXPERTISE K-BEAUTY</p>
+                            <p class="mb-0" style="font-family: var(--font-corps); font-size: 0.8rem; color: var(--gris); line-height: 1.5;">Des produits coréens rigoureusement sélectionnés pour des résultats visibles.</p>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3 mb-3 mb-md-0">
-                    <div class="d-flex align-items-center justify-content-center gap-2">
-                        <span style="font-size: 1.5rem;">🔬</span>
-                        <div class="text-start">
-                            <p class="fw-bold mb-0 small">ANALYSE DE PEAU OFFERTE</p>
-                            <p class="text-muted mb-0 small">Un diagnostic personnalisé grâce à notre technologie de pointe.</p>
+
+                {# Analyse de peau #}
+                <div class="col-6 col-md-3 mb-3 mb-md-0">
+                    <div class="d-flex align-items-start gap-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; margin-top:2px;">
+                            <circle cx="12" cy="8" r="5"/>
+                            <path d="M8 8a4 4 0 0 1 8 0"/>
+                            <path d="M9 13.5C9 16 10.3 18 12 18s3-2 3-4.5"/>
+                            <path d="M12 18v3"/>
+                            <path d="M9 21h6"/>
+                        </svg>
+                        <div>
+                            <p class="mb-1" style="font-family: var(--font-corps); font-size: 0.72rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--noir);">ANALYSE DE PEAU OFFERTE</p>
+                            <p class="mb-0" style="font-family: var(--font-corps); font-size: 0.8rem; color: var(--gris); line-height: 1.5;">Un diagnostic personnalisé grâce à notre technologie de pointe.</p>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="d-flex align-items-center justify-content-center gap-2">
-                        <span style="font-size: 1.5rem;">📍</span>
-                        <div class="text-start">
-                            <p class="fw-bold mb-0 small">RÉFÉRENCE À ANGERS</p>
-                            <p class="text-muted mb-0 small">Votre institut spécialisé en beauté coréenne au cœur d'Angers.</p>
+
+                {# Référence à Angers #}
+                <div class="col-6 col-md-3">
+                    <div class="d-flex align-items-start gap-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; margin-top:2px;">
+                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+                            <circle cx="12" cy="9" r="2.5"/>
+                        </svg>
+                        <div>
+                            <p class="mb-1" style="font-family: var(--font-corps); font-size: 0.72rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--noir);">RÉFÉRENCE À ANGERS</p>
+                            <p class="mb-0" style="font-family: var(--font-corps); font-size: 0.8rem; color: var(--gris); line-height: 1.5;">Votre institut spécialisé en beauté coréenne au cœur d'Angers.</p>
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
     </section>

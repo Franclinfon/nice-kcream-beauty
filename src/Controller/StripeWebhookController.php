@@ -5,7 +5,9 @@ namespace App\Controller;
 use App\Entity\Order;
 use App\Entity\OrderStatusHistory;
 use App\Service\CartService;
+use App\Service\MailerService;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Stripe\Exception\SignatureVerificationException;
 use Stripe\Stripe;
 use Stripe\Webhook;
@@ -23,8 +25,13 @@ class StripeWebhookController extends AbstractController
     }
 
     #[Route('/stripe/webhook', name: 'app_stripe_webhook', methods: ['POST'])]
-    public function webhook(Request $request, EntityManagerInterface $entityManager, CartService $cartService): Response
-    {
+    public function webhook(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        CartService $cartService,
+        MailerService $mailerService,
+        LoggerInterface $logger,
+    ): Response {
         $payload = $request->getContent();
         $sigHeader = $request->headers->get('Stripe-Signature');
 
@@ -39,7 +46,6 @@ class StripeWebhookController extends AbstractController
 
         if ($event->type === 'checkout.session.completed') {
             $session = $event->data->object;
-
             $orderId = $session->metadata->order_id ?? null;
 
             if (!$orderId) {
@@ -53,25 +59,36 @@ class StripeWebhookController extends AbstractController
             }
 
             if ($order->getStatut() === 'payee') {
-                // Déjà traitée, on répond 200 pour éviter les retentatives Stripe
                 return new Response('Déjà traitée.', 200);
             }
 
-            // Mise à jour du statut de la commande
             $order->setStatut('payee');
 
-            // Historique du statut
             $history = new OrderStatusHistory();
             $history->setCommande($order);
             $history->setStatut('payee');
             $history->setDate(new \DateTimeImmutable());
             $history->setCommentaire('Paiement confirmé via Stripe Checkout.');
             $entityManager->persist($history);
-
             $entityManager->flush();
 
-            // Note : le panier est lié à la session HTTP du client, pas accessible ici côté webhook.
-            // Il sera vidé côté front sur la page de succès via un flag en session.
+            $logger->info('[WEBHOOK] Commande payée : ' . $order->getNumeroCommande());
+
+            // Email client
+            try {
+                $mailerService->sendOrderConfirmationToClient($order);
+                $logger->info('[WEBHOOK] Email client envoyé à : ' . $order->getLivraisonEmail());
+            } catch (\Exception $e) {
+                $logger->error('[WEBHOOK] Erreur email client : ' . $e->getMessage());
+            }
+
+            // Email admin
+            try {
+                $mailerService->sendOrderNotificationToAdmin($order);
+                $logger->info('[WEBHOOK] Email admin envoyé.');
+            } catch (\Exception $e) {
+                $logger->error('[WEBHOOK] Erreur email admin : ' . $e->getMessage());
+            }
         }
 
         return new Response('OK', 200);

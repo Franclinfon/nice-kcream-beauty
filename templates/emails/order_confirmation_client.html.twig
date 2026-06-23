@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmation de commande</title>
+    <style>
+        body { font-family: 'Georgia', serif; background-color: #fdf6f0; margin: 0; padding: 0; color: #1a1a1a; }
+        .wrapper { max-width: 600px; margin: 40px auto; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 20px rgba(0,0,0,0.06); }
+        .header { background-color: #c95f83; padding: 32px 40px; text-align: center; }
+        .header h1 { font-family: Georgia, serif; color: #ffffff; font-size: 1.6rem; margin: 0; font-style: italic; }
+        .header p { color: rgba(255,255,255,0.85); font-size: 0.85rem; margin: 6px 0 0; letter-spacing: 2px; text-transform: uppercase; }
+        .body { padding: 40px; }
+        .greeting { font-size: 1rem; margin-bottom: 20px; }
+        .section-title { font-size: 0.75rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #c95f83; margin: 32px 0 12px; border-bottom: 1px solid #fdf0f4; padding-bottom: 8px; }
+        table { width: 100%; border-collapse: collapse; }
+        table th { text-align: left; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: #6b7280; padding: 8px 0; border-bottom: 1px solid #f0f0f0; }
+        table td { padding: 10px 0; font-size: 0.9rem; border-bottom: 1px solid #f9f9f9; vertical-align: top; }
+        .total-row td { font-weight: 700; font-size: 1rem; color: #c95f83; border-bottom: none; padding-top: 16px; }
+        .address-box { background: #fdf0f4; border-radius: 6px; padding: 16px 20px; font-size: 0.9rem; line-height: 1.7; }
+        .btn { display: inline-block; background-color: #c95f83; color: #ffffff !important; text-decoration: none; padding: 12px 28px; border-radius: 4px; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.5px; margin-top: 24px; }
+        .footer { background-color: #1a1a1a; padding: 24px 40px; text-align: center; }
+        .footer p { color: rgba(255,255,255,0.5); font-size: 0.75rem; margin: 4px 0; }
+        .footer a { color: rgba(255,255,255,0.65); text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+
+        <div class="header">
+            <h1>Nice K'Cream Beauty</h1>
+            <p>La référence K-Beauty à Angers</p>
+        </div>
+
+        <div class="body">
+            <p class="greeting">Bonjour <strong>{{ order.livraisonNom }}</strong>,</p>
+            <p>Merci pour votre commande ! Nous avons bien reçu votre paiement et nous préparons votre colis avec soin. 🌸</p>
+
+            <p class="section-title">Votre commande</p>
+            <p style="font-size: 0.85rem; color: #6b7280;">Référence : <strong>{{ order.numeroCommande }}</strong> — {{ order.createdAt|date('d/m/Y à H:i') }}</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Produit</th>
+                        <th style="text-align:center;">Qté</th>
+                        <th style="text-align:right;">Prix</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in order.orderItems %}
+                    <tr>
+                        <td>{{ item.nomProduit }}</td>
+                        <td style="text-align:center;">{{ item.quantite }}</td>
+                        <td style="text-align:right;">{{ (item.prixUnitaire * item.quantite)|number_format(2, ',', ' ') }} €</td>
+                    </tr>
+                    {% endfor %}
+                    <tr>
+                        <td colspan="2" style="text-align:right; font-size:0.85rem; color:#6b7280; padding-top:12px;">Livraison</td>
+                        <td style="text-align:right; padding-top:12px;">
+                            {% if order.shippingCost > 0 %}
+                                {{ order.shippingCost|number_format(2, ',', ' ') }} €
+                            {% else %}
+                                Gratuite
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr class="total-row">
+                        <td colspan="2" style="text-align:right;">Total payé</td>
+                        <td style="text-align:right;">{{ order.montantTotal|number_format(2, ',', ' ') }} €</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p class="section-title">Adresse de livraison</p>
+            <div class="address-box">
+                {{ order.livraisonNom }}<br>
+                {{ order.livraisonRue }}<br>
+                {% if order.livraisonComplement %}{{ order.livraisonComplement }}<br>{% endif %}
+                {{ order.livraisonCodePostal }} {{ order.livraisonVille }}<br>
+                {{ order.livraisonPays }}
+            </div>
+
+            <p class="section-title">Mode de livraison</p>
+            <p style="font-size:0.9rem;">
+                {% if order.deliveryMethod == 'colissimo' %}
+                    🚚 Livraison Colissimo (2-5 jours ouvrés)
+                {% else %}
+                    🏪 Retrait en boutique à Angers (sous 24/48h)
+                {% endif %}
+            </p>
+
+            <p style="font-size:0.85rem; color:#6b7280; margin-top:32px;">
+                Une question sur votre commande ? Contactez-nous à <a href="mailto:nicekreambeauty@gmail.com" style="color:#c95f83;">nicekreambeauty@gmail.com</a>
+            </p>
+        </div>
+
+        <div class="footer">
+            <p>Nice K'Cream Beauty — Angers, France</p>
+            <p><a href="https://nicekreambeauty.fr">nicekreambeauty.fr</a></p>
+        </div>
+
+    </div>
+</body>
+</html>

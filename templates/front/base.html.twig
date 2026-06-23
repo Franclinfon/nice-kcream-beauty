@@ -1,35 +1,335 @@
 {% extends 'base.html.twig' %}
 
 {% block stylesheets %}
-    {{ parent() }}
-    <style>
-        body { font-family: 'Helvetica Neue', Arial, sans-serif; color: #2d2d2d; }
-        .top-bar { background-color: #f8e6ea; font-size: 0.85rem; padding: 0.4rem 0; }
-        .navbar-brand { font-weight: 700; letter-spacing: 1px; }
-        .nav-link { color: #2d2d2d !important; font-weight: 500; }
-        .btn-pink { background-color: #e0769a !important; border-color: #e0769a !important; color: #fff !important; }
-        .btn-pink:hover { background-color: #c95f83 !important; border-color: #c95f83 !important; color: #fff !important; }
-        footer { background-color: #2d2d2d; color: #fff; }
-        footer a { color: #ddd; text-decoration: none; }
-        footer a:hover { color: #fff; }
-    </style>
+{{ parent() }}
+<style>
+    /* ===== VARIABLES ===== */
+    :root {
+        --rose: #c95f83;
+        --rose-light: #e0769a;
+        --rose-pale: #fdf0f4;
+        --creme: #fdf6f0;
+        --noir: #1a1a1a;
+        --gris: #6b7280;
+        --gris-clair: #f9fafb;
+        --or: #c9a96e;
+        --blanc: #ffffff;
+        --font-titre: 'Playfair Display', Georgia, serif;
+        --font-corps: 'Inter', sans-serif;
+        --radius: 12px;
+        --shadow: 0 2px 20px rgba(0,0,0,0.06);
+        --shadow-hover: 0 8px 40px rgba(0,0,0,0.12);
+        --transition: 0.3s ease;
+    }
+
+    /* ===== RESET & BASE ===== */
+    * { box-sizing: border-box; }
+    body {
+        font-family: var(--font-corps);
+        color: var(--noir);
+        background: var(--blanc);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    h1, h2, h3, h4, h5 {
+        font-family: var(--font-titre);
+        font-weight: 600;
+        line-height: 1.2;
+    }
+
+    /* ===== TOP BAR ===== */
+    .top-bar {
+        background-color: var(--rose-pale);
+        font-size: 0.8rem;
+        padding: 0.5rem 0;
+        color: var(--gris);
+        letter-spacing: 0.3px;
+    }
+
+    /* ===== NAVBAR ===== */
+    .navbar-brand-logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+    }
+    .navbar-brand-logo .logo-box {
+        width: 42px;
+        height: 42px;
+        border: 1.5px solid var(--noir);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+    }
+    .navbar-brand-logo .logo-box .logo-nk {
+        font-family: var(--font-titre);
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--noir);
+        letter-spacing: 1px;
+    }
+    .navbar-brand-logo .logo-text {
+        display: flex;
+        flex-direction: column;
+    }
+    .navbar-brand-logo .logo-text .brand-name {
+        font-family: var(--font-titre);
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: var(--noir);
+        letter-spacing: 2px;
+        line-height: 1.1;
+    }
+    .navbar-brand-logo .logo-text .brand-sub {
+        font-family: var(--font-corps);
+        font-size: 0.6rem;
+        color: var(--gris);
+        letter-spacing: 4px;
+        text-transform: uppercase;
+    }
+
+    .nav-link {
+        font-family: var(--font-corps);
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: var(--noir) !important;
+        letter-spacing: 0.5px;
+        padding: 0.5rem 0.8rem !important;
+        transition: color var(--transition);
+    }
+    .nav-link:hover { color: var(--rose) !important; }
+
+    /* ===== BOUTONS ===== */
+    .btn-pink {
+        background-color: var(--rose) !important;
+        border-color: var(--rose) !important;
+        color: var(--blanc) !important;
+        font-family: var(--font-corps);
+        font-size: 0.85rem;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        border-radius: 4px;
+        transition: all var(--transition);
+    }
+    .btn-pink:hover {
+        background-color: #b54d71 !important;
+        border-color: #b54d71 !important;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 15px rgba(201, 95, 131, 0.3);
+    }
+
+    .btn-outline-rose {
+        background: transparent;
+        border: 1.5px solid var(--rose);
+        color: var(--rose) !important;
+        font-family: var(--font-corps);
+        font-size: 0.85rem;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        border-radius: 4px;
+        transition: all var(--transition);
+    }
+    .btn-outline-rose:hover {
+        background: var(--rose);
+        color: var(--blanc) !important;
+        transform: translateY(-1px);
+    }
+
+    /* ===== TRAIT DÉCORATIF ===== */
+    .section-divider {
+        display: inline-block;
+        width: 40px;
+        height: 2px;
+        background: var(--rose);
+        margin: 0.5rem auto 2rem;
+    }
+
+    /* ===== CARDS ===== */
+    .card-produit {
+        border: none;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        transition: all var(--transition);
+        overflow: hidden;
+    }
+    .card-produit:hover {
+        box-shadow: var(--shadow-hover);
+        transform: translateY(-4px);
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+        background-color: var(--noir);
+        color: rgba(255,255,255,0.8);
+    }
+    footer a {
+        color: rgba(255,255,255,0.65);
+        text-decoration: none;
+        transition: color var(--transition);
+        font-size: 0.85rem;
+    }
+    footer a:hover { color: var(--blanc); }
+    footer h5, footer h6 {
+        font-family: var(--font-titre);
+        color: var(--blanc);
+        font-size: 0.95rem;
+        margin-bottom: 1rem;
+    }
+
+    /* ===== UTILITAIRES ===== */
+    .text-rose { color: var(--rose) !important; }
+    .bg-creme { background-color: var(--creme) !important; }
+    .bg-rose-pale { background-color: var(--rose-pale) !important; }
+
+    /* ===== HERO ===== */
+    .hero-section {
+        position: relative;
+        min-height: 560px;
+    }
+    .hero-bg {
+        position: absolute;
+        inset: 0;
+        background-size: cover;
+        background-position: center right;
+        background-repeat: no-repeat;
+    }
+    .hero-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+            to right,
+            rgba(253, 246, 240, 0.92) 0%,
+            rgba(253, 246, 240, 0.75) 45%,
+            rgba(253, 246, 240, 0.1) 100%
+        );
+    }
+    .hero-title {
+        font-family: var(--font-titre);
+        line-height: 1.15;
+        margin-bottom: 1.5rem;
+    }
+    .hero-title-rose {
+        font-size: 3.2rem;
+        font-weight: 600;
+        font-style: italic;
+        color: var(--rose);
+        white-space: nowrap;
+    }
+    .hero-title-noir {
+        font-size: 3.2rem;
+        font-weight: 700;
+        font-style: normal;
+        color: var(--noir);
+        white-space: nowrap;
+    }
+    .hero-subtitle {
+        font-family: var(--font-corps);
+        font-size: 1rem;
+        color: #4a4a4a;
+        line-height: 1.8;
+        font-weight: 400;
+    }
+    .btn-hero {
+        padding: 0.75rem 1.75rem;
+        font-size: 0.9rem;
+        border-radius: 4px;
+    }
+    .btn-outline-rose {
+        background: transparent !important;
+        border: 1.5px solid var(--rose) !important;
+        color: var(--rose) !important;
+        font-family: var(--font-corps);
+        font-size: 0.85rem;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        border-radius: 4px;
+        transition: all var(--transition);
+    }
+    .btn-outline-rose:hover {
+        background: var(--rose) !important;
+        color: var(--blanc) !important;
+        transform: translateY(-1px);
+    }
+    .hero-badge {
+        position: absolute;
+        bottom: 40px;
+        right: 60px;
+        z-index: 3;
+        width: 110px;
+        height: 110px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.9);
+        border: 1.5px solid var(--rose);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        box-shadow: 0 4px 20px rgba(201,95,131,0.15);
+    }
+    .hero-badge-inner {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1px;
+    }
+    .hero-badge-icon {
+        color: var(--rose);
+        font-size: 1rem;
+        margin-bottom: 2px;
+    }
+    .hero-badge-line1 {
+        font-family: var(--font-corps);
+        font-size: 0.55rem;
+        font-weight: 600;
+        letter-spacing: 1px;
+        color: var(--noir);
+        text-transform: uppercase;
+    }
+    .hero-badge-line2 {
+        font-family: var(--font-titre);
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: var(--rose);
+        font-style: italic;
+    }
+    .hero-badge-line3 {
+        font-family: var(--font-corps);
+        font-size: 0.55rem;
+        font-weight: 600;
+        letter-spacing: 1px;
+        color: var(--noir);
+        text-transform: uppercase;
+    }
+
+</style>
 {% endblock %}
 
 {% block body %}
     <div class="top-bar text-center">
-        Livraison offerte dès 70€ d'achat · La référence K-Beauty à Angers
+        Livraison offerte dès 70€ d'achat &nbsp;·&nbsp; La référence K-Beauty à Angers
     </div>
 
-    <header class="border-bottom bg-white">
-        <nav class="navbar navbar-expand-lg navbar-light container py-3">
-            <a class="navbar-brand" href="{{ path('app_front_home') }}">NICE K'CREAM <span class="d-block small text-muted" style="letter-spacing: 2px;">BEAUTY</span></a>
+    <header class="bg-white border-bottom sticky-top">
+        <nav class="navbar navbar-expand-lg container py-2">
+            <a class="navbar-brand-logo" href="{{ path('app_front_home') }}">
+                <div class="logo-box">
+                    <span class="logo-nk">NK</span>
+                </div>
+                <div class="logo-text">
+                    <span class="brand-name">NICE K'CREAM</span>
+                    <span class="brand-sub">Beauty</span>
+                </div>
+            </a>
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
             <div class="collapse navbar-collapse" id="mainNav">
-                <ul class="navbar-nav mx-auto">
+                <ul class="navbar-nav mx-auto gap-1">
                     <li class="nav-item"><a class="nav-link" href="{{ path('app_front_home') }}">Accueil</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ path('app_front_product_index') }}">Boutique</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">Soins</a></li>
@@ -38,24 +338,34 @@
                     <li class="nav-item"><a class="nav-link" href="#">À propos</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
                 </ul>
-                {% if app.user %}
-                    <a href="{{ path('app_front_account_index') }}" class="btn btn-outline-dark me-2">
-                        👤 {{ app.user.prenom }}
-                    </a>
-                {% else %}
-                    <a href="{{ path('app_login') }}" class="btn btn-outline-dark me-2">
-                        Se connecter
-                    </a>
-                {% endif %}
-                <a href="{{ path('app_front_cart_index') }}" class="btn btn-outline-dark position-relative me-2">
-                    🛒 Panier
-                    {% if cart_item_count() > 0 %}
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                            {{ cart_item_count() }}
-                        </span>
+                <div class="d-flex align-items-center gap-2">
+                    {% if app.user %}
+                        <a href="{{ path('app_front_account_index') }}" class="btn btn-outline-dark btn-sm">
+                            👤 {{ app.user.prenom }}
+                        </a>
+                    {% else %}
+                        <a href="{{ path('app_login') }}" class="btn btn-outline-dark btn-sm">
+                            Se connecter
+                        </a>
                     {% endif %}
-                </a>
-                <a href="#" class="btn btn-pink">Réserver un soin</a>
+                    <a href="{{ path('app_front_cart_index') }}" class="btn btn-outline-dark btn-sm position-relative">
+                        🛒 Panier
+                        {% if cart_item_count() > 0 %}
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem;">
+                                {{ cart_item_count() }}
+                            </span>
+                        {% endif %}
+                    </a>
+                    <a href="https://share.google/XNtyVAzeKl9r4qIEV" target="_blank" class="btn btn-pink btn-hero d-flex align-items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                            <line x1="16" y1="2" x2="16" y2="6"/>
+                            <line x1="8" y1="2" x2="8" y2="6"/>
+                            <line x1="3" y1="10" x2="21" y2="10"/>
+                        </svg>
+                        Réserver un soin
+                    </a>
+                </div>
             </div>
         </nav>
     </header>
@@ -67,37 +377,61 @@
     <footer class="py-5 mt-5">
         <div class="container">
             <div class="row">
-                <div class="col-md-3 mb-4">
+                <div class="col-md-4 mb-4">
                     <h5>Nice K'Cream Beauty</h5>
-                    <p class="small">Institut spécialisé en beauté coréenne, soins experts et cosmétiques sélectionnés pour révéler l'éclat naturel de votre peau.</p>
+                    <p class="small" style="color: rgba(255,255,255,0.6); line-height: 1.7;">
+                        Institut spécialisé en beauté coréenne, soins experts et cosmétiques sélectionnés pour révéler l'éclat naturel de votre peau.
+                    </p>
                 </div>
-                <div class="col-md-3 mb-4">
+                <div class="col-md-2 mb-4">
                     <h6>Boutique</h6>
-                    <ul class="list-unstyled small">
-                        <li><a href="{{ path('app_front_product_index') }}">Tous nos produits</a></li>
-                        <li><a href="#">Nouveautés</a></li>
-                        <li><a href="#">Coffrets</a></li>
+                    <ul class="list-unstyled">
+                        <li class="mb-1"><a href="{{ path('app_front_product_index') }}">Tous nos produits</a></li>
+                        <li class="mb-1"><a href="#">Nouveautés</a></li>
+                        <li class="mb-1"><a href="#">Promotions</a></li>
+                        <li class="mb-1"><a href="#">Coffrets</a></li>
                     </ul>
                 </div>
-                <div class="col-md-3 mb-4">
+                <div class="col-md-2 mb-4">
                     <h6>Soins</h6>
-                    <ul class="list-unstyled small">
-                        <li><a href="#">Soins visage</a></li>
-                        <li><a href="#">Épilation laser</a></li>
-                        <li><a href="#">Massages</a></li>
+                    <ul class="list-unstyled">
+                        <li class="mb-1"><a href="#">Soins visage</a></li>
+                        <li class="mb-1"><a href="#">Épilation laser</a></li>
+                        <li class="mb-1"><a href="#">Massages</a></li>
+                        <li class="mb-1"><a href="#">Analyse de peau</a></li>
+                        <li class="mb-1"><a href="#">Réserver sur Fresha</a></li>
                     </ul>
                 </div>
-                <div class="col-md-3 mb-4">
+                <div class="col-md-2 mb-4">
+                    <h6>À propos</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-1"><a href="#">Notre histoire</a></li>
+                        <li class="mb-1"><a href="#">Expertise</a></li>
+                        <li class="mb-1"><a href="#">Formation</a></li>
+                        <li class="mb-1"><a href="#">Le salon</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-2 mb-4">
                     <h6>Aide & infos</h6>
-                    <ul class="list-unstyled small">
-                        <li><a href="#">Livraison</a></li>
-                        <li><a href="#">FAQ</a></li>
-                        <li><a href="#">Contact</a></li>
+                    <ul class="list-unstyled">
+                        <li class="mb-1"><a href="#">Livraison</a></li>
+                        <li class="mb-1"><a href="#">Retours & échanges</a></li>
+                        <li class="mb-1"><a href="#">FAQ</a></li>
+                        <li class="mb-1"><a href="#">Contact</a></li>
                     </ul>
                 </div>
             </div>
-            <hr class="border-secondary">
-            <p class="text-center small mb-0">&copy; {{ "now"|date("Y") }} Nice K'Cream Beauty — Tous droits réservés.</p>
+            <hr style="border-color: rgba(255,255,255,0.1);">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <p class="small mb-0" style="color: rgba(255,255,255,0.4);">
+                    &copy; {{ "now"|date("Y") }} Nice K'Cream Beauty — Tous droits réservés.
+                </p>
+                <div class="d-flex gap-3">
+                    <a href="#">Mentions légales</a>
+                    <a href="#">CGV</a>
+                    <a href="#">Politique de confidentialité</a>
+                </div>
+            </div>
         </div>
     </footer>
 {% endblock %}

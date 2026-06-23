@@ -22,3 +22,9 @@ services:
             $stripeSecretKey: '%stripe_secret_key%'
             $stripeWebhookSecret: '%stripe_webhook_secret%'
         tags: ['controller.service_arguments']
+
+    App\Service\MailerService:
+        arguments:
+            $mailerFrom: '%env(MAILER_FROM)%'
+            $mailerAdmin1: '%env(MAILER_ADMIN_1)%'
+            $mailerAdmin2: '%env(MAILER_ADMIN_2)%'
