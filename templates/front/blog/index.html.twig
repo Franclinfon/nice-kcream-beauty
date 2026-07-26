@@ -1,0 +1,360 @@
+{% extends 'front/base.html.twig' %}
+
+{% block title %}Blog K-Beauty — Conseils & Tendances — Nice K'Cream Beauty{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .blog-hero {
+        background: linear-gradient(135deg, var(--rose-pale) 0%, #fdf6f0 100%);
+        padding: 4rem 0 3rem;
+        text-align: center;
+    }
+    .blog-hero h1 {
+        font-family: var(--font-titre);
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--noir);
+        margin-bottom: 0.75rem;
+    }
+    .blog-hero h1 span { color: var(--rose); font-style: italic; }
+    .blog-hero p {
+        font-size: 1rem;
+        color: var(--gris);
+        max-width: 500px;
+        margin: 0 auto;
+        line-height: 1.7;
+    }
+
+    /* Card article principale */
+    .blog-card-main {
+        border-radius: 16px;
+        overflow: hidden;
+        background: white;
+        box-shadow: 0 4px 30px rgba(0,0,0,0.07);
+        transition: all 0.3s ease;
+        text-decoration: none;
+        color: inherit;
+        display: block;
+    }
+    .blog-card-main:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 50px rgba(0,0,0,0.12);
+        color: inherit;
+        text-decoration: none;
+    }
+    .blog-card-main-img {
+        width: 100%;
+        height: 300px;
+        object-fit: cover;
+    }
+    .blog-card-main-img-placeholder {
+        width: 100%;
+        height: 300px;
+        background: linear-gradient(135deg, var(--rose-pale), #fdf6f0);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .blog-card-main-body { padding: 2rem; }
+    .blog-card-cat {
+        display: inline-block;
+        background: var(--rose-pale);
+        color: var(--rose);
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        padding: 0.3rem 0.75rem;
+        border-radius: 50px;
+        margin-bottom: 1rem;
+    }
+    .blog-card-main-title {
+        font-family: var(--font-titre);
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--noir);
+        margin-bottom: 0.75rem;
+        line-height: 1.3;
+    }
+    .blog-card-main-excerpt {
+        font-size: 0.9rem;
+        color: var(--gris);
+        line-height: 1.7;
+        margin-bottom: 1.25rem;
+    }
+    .blog-card-meta {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        font-size: 0.8rem;
+        color: var(--gris);
+    }
+    .blog-card-read {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: var(--rose);
+        letter-spacing: 0.5px;
+    }
+
+    /* Card article secondaire */
+    .blog-card-small {
+        border-radius: 12px;
+        overflow: hidden;
+        background: white;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.06);
+        transition: all 0.3s ease;
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        height: 100%;
+    }
+    .blog-card-small:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+        color: inherit;
+        text-decoration: none;
+    }
+    .blog-card-small-img {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+    }
+    .blog-card-small-img-placeholder {
+        width: 100%;
+        height: 180px;
+        background: linear-gradient(135deg, var(--rose-pale), #fdf6f0);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .blog-card-small-body { padding: 1.25rem; }
+    .blog-card-small-title {
+        font-family: var(--font-titre);
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--noir);
+        margin-bottom: 0.5rem;
+        line-height: 1.3;
+    }
+    .blog-card-small-excerpt {
+        font-size: 0.82rem;
+        color: var(--gris);
+        line-height: 1.6;
+        margin-bottom: 0.75rem;
+    }
+
+    /* Sidebar */
+    .blog-sidebar-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.06);
+        margin-bottom: 1.5rem;
+    }
+    .blog-sidebar-title {
+        font-family: var(--font-titre);
+        font-size: 1.1rem;
+        color: var(--noir);
+        margin-bottom: 1rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid var(--rose-pale);
+    }
+    .blog-sidebar-item {
+        display: flex;
+        gap: 0.75rem;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #f9f9f9;
+        text-decoration: none;
+        color: inherit;
+        transition: all 0.2s;
+    }
+    .blog-sidebar-item:last-child { border-bottom: none; }
+    .blog-sidebar-item:hover { color: var(--rose); }
+    .blog-sidebar-item-title {
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: var(--noir);
+        line-height: 1.3;
+        transition: color 0.2s;
+    }
+    .blog-sidebar-item:hover .blog-sidebar-item-title { color: var(--rose); }
+    .blog-sidebar-item-date {
+        font-size: 0.72rem;
+        color: var(--gris);
+        margin-top: 0.2rem;
+    }
+    .blog-sidebar-img {
+        width: 55px;
+        height: 55px;
+        border-radius: 8px;
+        object-fit: cover;
+        flex-shrink: 0;
+    }
+    .blog-sidebar-img-placeholder {
+        width: 55px;
+        height: 55px;
+        border-radius: 8px;
+        background: var(--rose-pale);
+        flex-shrink: 0;
+    }
+    .cat-badge {
+        display: inline-block;
+        background: var(--rose-pale);
+        color: var(--rose);
+        font-size: 0.72rem;
+        font-weight: 600;
+        padding: 0.3rem 0.75rem;
+        border-radius: 50px;
+        margin: 0.2rem;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+    .cat-badge:hover {
+        background: var(--rose);
+        color: white;
+    }
+
+    /* Empty state */
+    .blog-empty {
+        text-align: center;
+        padding: 5rem 2rem;
+        color: var(--gris);
+    }
+    .blog-empty svg { margin-bottom: 1.5rem; opacity: 0.3; }
+    .blog-empty h3 { font-family: var(--font-titre); color: var(--noir); margin-bottom: 0.5rem; }
+</style>
+{% endblock %}
+
+{% block content %}
+
+    {# Hero #}
+    <section class="blog-hero">
+        <div class="container">
+            <h1>Le Blog <span>K-Beauty</span></h1>
+            <div class="mb-3"><span style="display:inline-block;width:40px;height:2px;background:var(--rose);"></span></div>
+            <p>Conseils beauté, tendances coréennes, routines et astuces pour révéler l'éclat naturel de votre peau.</p>
+        </div>
+    </section>
+
+    <section class="py-5" style="background:#fafafa;">
+        <div class="container">
+            {% if posts|length > 0 %}
+            <div class="row g-4">
+
+                {# Colonne principale #}
+                <div class="col-lg-8">
+
+                    {# Article principal (le plus récent) #}
+                    {% set firstPost = posts[0] %}
+                    <a href="{{ path('app_front_blog_show', {slug: firstPost.slug}) }}" class="blog-card-main mb-4 d-block">
+                        {% if firstPost.image %}
+                            <img src="{{ asset('uploads/blog/' ~ firstPost.image) }}" alt="{{ firstPost.titre }}" class="blog-card-main-img">
+                        {% else %}
+                            <div class="blog-card-main-img-placeholder">
+                                <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                            </div>
+                        {% endif %}
+                        <div class="blog-card-main-body">
+                            <span class="blog-card-cat">{{ firstPost.categorie }}</span>
+                            <h2 class="blog-card-main-title">{{ firstPost.titre }}</h2>
+                            <p class="blog-card-main-excerpt">
+                                {{ firstPost.contenu|striptags|slice(0, 200) }}...
+                            </p>
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="blog-card-meta">
+                                    <span>{{ firstPost.publishedAt ? firstPost.publishedAt|date('d/m/Y') : '' }}</span>
+                                </div>
+                                <span class="blog-card-read">Lire l'article →</span>
+                            </div>
+                        </div>
+                    </a>
+
+                    {# Articles suivants #}
+                    {% if posts|length > 1 %}
+                    <div class="row g-4">
+                        {% for post in posts|slice(1) %}
+                        <div class="col-md-6">
+                            <a href="{{ path('app_front_blog_show', {slug: post.slug}) }}" class="blog-card-small">
+                                {% if post.image %}
+                                    <img src="{{ asset('uploads/blog/' ~ post.image) }}" alt="{{ post.titre }}" class="blog-card-small-img">
+                                {% else %}
+                                    <div class="blog-card-small-img-placeholder">
+                                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                                    </div>
+                                {% endif %}
+                                <div class="blog-card-small-body">
+                                    <span class="blog-card-cat">{{ post.categorie }}</span>
+                                    <h3 class="blog-card-small-title">{{ post.titre }}</h3>
+                                    <p class="blog-card-small-excerpt">
+                                        {{ post.contenu|striptags|slice(0, 100) }}...
+                                    </p>
+                                    <span class="blog-card-read">Lire l'article →</span>
+                                </div>
+                            </a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                </div>
+
+                {# Sidebar #}
+                <div class="col-lg-4">
+
+                    {# Articles récents #}
+                    <div class="blog-sidebar-card">
+                        <h4 class="blog-sidebar-title">Articles récents</h4>
+                        {% for post in posts|slice(0, 5) %}
+                        <a href="{{ path('app_front_blog_show', {slug: post.slug}) }}" class="blog-sidebar-item">
+                            {% if post.image %}
+                                <img src="{{ asset('uploads/blog/' ~ post.image) }}" alt="{{ post.titre }}" class="blog-sidebar-img">
+                            {% else %}
+                                <div class="blog-sidebar-img-placeholder"></div>
+                            {% endif %}
+                            <div>
+                                <p class="blog-sidebar-item-title">{{ post.titre }}</p>
+                                <p class="blog-sidebar-item-date">{{ post.publishedAt ? post.publishedAt|date('d/m/Y') : '' }}</p>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </div>
+
+                    {# Catégories #}
+                    <div class="blog-sidebar-card">
+                        <h4 class="blog-sidebar-title">Catégories</h4>
+                        <div>
+                            {% set categories = [] %}
+                            {% for post in posts %}
+                                {% if post.categorie not in categories %}
+                                    {% set categories = categories|merge([post.categorie]) %}
+                                    <a href="#" class="cat-badge">{{ post.categorie }}</a>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    {# CTA réservation #}
+                    <div class="blog-sidebar-card text-center" style="background: var(--rose-pale);">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="1.5" class="mb-3"><circle cx="12" cy="8" r="5"/><path d="M9 13.5C9 16 10.3 18 12 18s3-2 3-4.5"/></svg>
+                        <h4 class="blog-sidebar-title" style="border:none; text-align:center;">Analyse de peau offerte</h4>
+                        <p style="font-size:0.82rem; color:var(--gris); margin-bottom:1rem;">Découvrez votre routine K-Beauty idéale avec notre experte en boutique.</p>
+                        <a href="https://www.fresha.com/fr/a/nice-kcream-beauty-angers-4-place-pierre-mendes-france-mh3yfeql"
+                           target="_blank" rel="noopener"
+                           class="btn btn-pink btn-sm w-100">Réserver gratuitement</a>
+                    </div>
+
+                </div>
+            </div>
+
+            {% else %}
+            <div class="blog-empty">
+                <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="1"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                <h3>Aucun article pour le moment</h3>
+                <p>Nos premiers conseils beauté arrivent bientôt !</p>
+            </div>
+            {% endif %}
+        </div>
+    </section>
+
+{% endblock %}

@@ -7,6 +7,7 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
 use Twig\Environment;
+use App\Entity\ContactMessage;
 
 class MailerService
 {
@@ -62,4 +63,34 @@ class MailerService
             $this->mailer->send($email2);
         }
     }
+
+    public function sendContactNotificationToAdmin(ContactMessage $contact): void
+    {
+        $html = $this->twig->render('emails/contact_notification_admin.html.twig', [
+            'contact' => $contact,
+        ]);
+
+        $subject = '📩 Nouveau message de contact — ' . $contact->getSujet();
+
+        $email1 = (new Email())
+            ->from(new Address($this->mailerFrom, 'Nice K\'Cream Beauty'))
+            ->to($this->mailerAdmin1)
+            ->replyTo($contact->getEmail())
+            ->subject($subject)
+            ->html($html);
+
+        $this->mailer->send($email1);
+
+        if ($this->mailerAdmin2 !== $this->mailerAdmin1) {
+            $email2 = (new Email())
+                ->from(new Address($this->mailerFrom, 'Nice K\'Cream Beauty'))
+                ->to($this->mailerAdmin2)
+                ->replyTo($contact->getEmail())
+                ->subject($subject)
+                ->html($html);
+
+            $this->mailer->send($email2);
+        }
+    }
+
 }

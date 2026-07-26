@@ -1,0 +1,53 @@
+{% extends 'front/legal/base_legal.html.twig' %}
+
+{% block title %}Politique des cookies — Nice K'Cream Beauty{% endblock %}
+{% block legal_title %}Politique des cookies{% endblock %}
+{% block legal_subtitle %}Utilisation des cookies sur notre site{% endblock %}
+
+{% block legal_content %}
+
+<h2>1. Qu'est-ce qu'un cookie ?</h2>
+<p>
+    Un cookie est un petit fichier texte déposé sur votre navigateur lors de votre visite sur notre site. Il permet de mémoriser des informations relatives à votre navigation afin d'améliorer votre expérience.
+</p>
+
+<h2>2. Cookies utilisés sur ce site</h2>
+
+<h3>Cookies strictement nécessaires</h3>
+<p>Ces cookies sont indispensables au fonctionnement du site. Ils ne peuvent pas être désactivés.</p>
+<ul>
+    <li><strong>PHPSESSID</strong> — Cookie de session Symfony. Maintient votre session connectée (panier, compte client). Durée : session navigateur.</li>
+</ul>
+
+<h3>Cookies de paiement (Stripe)</h3>
+<p>Lors du processus de paiement, Stripe dépose des cookies nécessaires à la sécurisation de la transaction.</p>
+<ul>
+    <li><strong>__stripe_mid, __stripe_sid</strong> — Détection de fraude et sécurisation du paiement. Durée : 1 an / session.</li>
+</ul>
+<p>Pour plus d'informations : <a href="https://stripe.com/fr/privacy" target="_blank" rel="noopener">Politique de confidentialité Stripe</a></p>
+
+<h3>Cookies de typographie (Google Fonts)</h3>
+<p>
+    Notre site utilise Google Fonts pour charger les polices Playfair Display et Inter. Google peut déposer des cookies lors du chargement de ces ressources.
+</p>
+<p>Pour plus d'informations : <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Politique de confidentialité Google</a></p>
+
+<h2>3. Cookies non utilisés</h2>
+<p>Ce site n'utilise <strong>pas</strong> de cookies à des fins publicitaires, de tracking ou d'analyse comportementale (pas de Google Analytics, pas de Facebook Pixel).</p>
+
+<h2>4. Gestion des cookies</h2>
+<p>Vous pouvez gérer vos préférences de cookies directement depuis votre navigateur :</p>
+<ul>
+    <li><a href="https://support.google.com/chrome/answer/95647" target="_blank" rel="noopener">Google Chrome</a></li>
+    <li><a href="https://support.mozilla.org/fr/kb/cookies-informations-sites-enregistrent" target="_blank" rel="noopener">Mozilla Firefox</a></li>
+    <li><a href="https://support.apple.com/fr-fr/guide/safari/sfri11471/mac" target="_blank" rel="noopener">Safari</a></li>
+    <li><a href="https://support.microsoft.com/fr-fr/windows/supprimer-et-g%C3%A9rer-les-cookies-168dab11-0753-043d-7c16-ede5947fc64d" target="_blank" rel="noopener">Microsoft Edge</a></li>
+</ul>
+<p>La désactivation des cookies strictement nécessaires peut affecter le bon fonctionnement du site (panier, connexion).</p>
+
+<h2>5. Contact</h2>
+<p>
+    Pour toute question relative aux cookies : <a href="mailto:nicekreambeauty@gmail.com">nicekreambeauty@gmail.com</a>
+</p>
+
+{% endblock %}

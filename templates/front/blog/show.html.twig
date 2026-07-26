@@ -1,0 +1,221 @@
+{% extends 'front/base.html.twig' %}
+
+{% block title %}{{ post.titre }} — Blog Nice K'Cream Beauty{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .blog-show-hero {
+        background: var(--rose-pale);
+        padding: 3rem 0 2rem;
+    }
+    .blog-show-hero .blog-card-cat {
+        display: inline-block;
+        background: white;
+        color: var(--rose);
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        padding: 0.3rem 0.75rem;
+        border-radius: 50px;
+        margin-bottom: 1rem;
+    }
+    .blog-show-hero h1 {
+        font-family: var(--font-titre);
+        font-size: clamp(1.6rem, 3vw, 2.5rem);
+        font-weight: 700;
+        color: var(--noir);
+        line-height: 1.25;
+        margin-bottom: 1rem;
+    }
+    .blog-show-meta {
+        font-size: 0.82rem;
+        color: var(--gris);
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+    }
+    .blog-show-img {
+        width: 100%;
+        max-height: 480px;
+        object-fit: cover;
+        border-radius: 12px;
+        margin: 2rem 0;
+    }
+    .blog-show-img-placeholder {
+        width: 100%;
+        height: 300px;
+        background: linear-gradient(135deg, var(--rose-pale), #fdf6f0);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 2rem 0;
+    }
+    .blog-show-content {
+        font-size: 0.95rem;
+        line-height: 1.9;
+        color: #374151;
+    }
+    .blog-show-content p { margin-bottom: 1.25rem; }
+    .blog-show-content h2, .blog-show-content h3 {
+        font-family: var(--font-titre);
+        color: var(--noir);
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+    }
+
+    /* Sidebar */
+    .blog-sidebar-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.06);
+        margin-bottom: 1.5rem;
+    }
+    .blog-sidebar-title {
+        font-family: var(--font-titre);
+        font-size: 1.1rem;
+        color: var(--noir);
+        margin-bottom: 1rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid var(--rose-pale);
+    }
+    .blog-sidebar-item {
+        display: flex;
+        gap: 0.75rem;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #f9f9f9;
+        text-decoration: none;
+        color: inherit;
+        transition: all 0.2s;
+    }
+    .blog-sidebar-item:last-child { border-bottom: none; }
+    .blog-sidebar-item-title {
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: var(--noir);
+        line-height: 1.3;
+        transition: color 0.2s;
+    }
+    .blog-sidebar-item:hover .blog-sidebar-item-title { color: var(--rose); }
+    .blog-sidebar-item-date { font-size: 0.72rem; color: var(--gris); }
+    .blog-sidebar-img {
+        width: 55px;
+        height: 55px;
+        border-radius: 8px;
+        object-fit: cover;
+        flex-shrink: 0;
+    }
+    .blog-sidebar-img-placeholder {
+        width: 55px;
+        height: 55px;
+        border-radius: 8px;
+        background: var(--rose-pale);
+        flex-shrink: 0;
+    }
+    .blog-back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: var(--rose);
+        text-decoration: none;
+        margin-bottom: 1rem;
+        transition: opacity 0.2s;
+    }
+    .blog-back-link:hover { opacity: 0.7; color: var(--rose); }
+</style>
+{% endblock %}
+
+{% block content %}
+
+    {# Hero article #}
+    <section class="blog-show-hero">
+        <div class="container">
+            <a href="{{ path('app_front_blog_index') }}" class="blog-back-link">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+                Retour au blog
+            </a>
+            <span class="blog-card-cat">{{ post.categorie }}</span>
+            <h1>{{ post.titre }}</h1>
+            <div class="blog-show-meta">
+                <span>📅 {{ post.publishedAt ? post.publishedAt|date('d/m/Y') : '' }}</span>
+                {% if post.auteur %}
+                    <span>✍️ {{ post.auteur.prenom }} {{ post.auteur.nom }}</span>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5" style="background:#fafafa;">
+        <div class="container">
+            <div class="row g-5">
+
+                {# Contenu principal #}
+                <div class="col-lg-8">
+                    {% if post.image %}
+                        <img src="{{ asset('uploads/blog/' ~ post.image) }}" alt="{{ post.titre }}" class="blog-show-img">
+                    {% else %}
+                        <div class="blog-show-img-placeholder">
+                            <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                        </div>
+                    {% endif %}
+
+                    <div class="blog-show-content">
+                        {{ post.contenu|raw }}
+                    </div>
+
+                    {# Navigation bas de page #}
+                    <div class="d-flex justify-content-between align-items-center mt-5 pt-4" style="border-top: 1px solid #f0f0f0;">
+                        <a href="{{ path('app_front_blog_index') }}" class="blog-back-link">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+                            Tous les articles
+                        </a>
+                        <a href="https://www.fresha.com/fr/a/nice-kcream-beauty-angers-4-place-pierre-mendes-france-mh3yfeql"
+                           target="_blank" rel="noopener"
+                           class="btn btn-pink btn-sm">
+                            Réserver un soin
+                        </a>
+                    </div>
+                </div>
+
+                {# Sidebar #}
+                <div class="col-lg-4">
+                    <div class="blog-sidebar-card">
+                        <h4 class="blog-sidebar-title">Articles récents</h4>
+                        {% for recentPost in recentPosts %}
+                        {% if recentPost.slug != post.slug %}
+                        <a href="{{ path('app_front_blog_show', {slug: recentPost.slug}) }}" class="blog-sidebar-item">
+                            {% if recentPost.image %}
+                                <img src="{{ asset('uploads/blog/' ~ recentPost.image) }}" alt="{{ recentPost.titre }}" class="blog-sidebar-img">
+                            {% else %}
+                                <div class="blog-sidebar-img-placeholder"></div>
+                            {% endif %}
+                            <div>
+                                <p class="blog-sidebar-item-title">{{ recentPost.titre }}</p>
+                                <p class="blog-sidebar-item-date">{{ recentPost.publishedAt ? recentPost.publishedAt|date('d/m/Y') : '' }}</p>
+                            </div>
+                        </a>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+
+                    <div class="blog-sidebar-card text-center" style="background: var(--rose-pale);">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="1.5" class="mb-3"><circle cx="12" cy="8" r="5"/><path d="M9 13.5C9 16 10.3 18 12 18s3-2 3-4.5"/></svg>
+                        <h4 class="blog-sidebar-title" style="border:none; text-align:center;">Analyse de peau offerte</h4>
+                        <p style="font-size:0.82rem; color:var(--gris); margin-bottom:1rem;">Découvrez votre routine K-Beauty idéale avec notre experte.</p>
+                        <a href="https://www.fresha.com/fr/a/nice-kcream-beauty-angers-4-place-pierre-mendes-france-mh3yfeql"
+                           target="_blank" rel="noopener"
+                           class="btn btn-pink btn-sm w-100">Réserver gratuitement</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+{% endblock %}

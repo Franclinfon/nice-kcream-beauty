@@ -122,8 +122,8 @@
     }
 
     .btn-outline-rose {
-        background: transparent;
-        border: 1.5px solid var(--rose);
+        background: transparent !important;
+        border: 1.5px solid var(--rose) !important;
         color: var(--rose) !important;
         font-family: var(--font-corps);
         font-size: 0.85rem;
@@ -133,7 +133,7 @@
         transition: all var(--transition);
     }
     .btn-outline-rose:hover {
-        background: var(--rose);
+        background: var(--rose) !important;
         color: var(--blanc) !important;
         transform: translateY(-1px);
     }
@@ -208,7 +208,7 @@
     }
     .hero-title {
         font-family: var(--font-titre);
-        line-height: 1.15;
+        line-height: 1.0;
         margin-bottom: 1.5rem;
     }
     .hero-title-rose {
@@ -236,22 +236,6 @@
         padding: 0.75rem 1.75rem;
         font-size: 0.9rem;
         border-radius: 4px;
-    }
-    .btn-outline-rose {
-        background: transparent !important;
-        border: 1.5px solid var(--rose) !important;
-        color: var(--rose) !important;
-        font-family: var(--font-corps);
-        font-size: 0.85rem;
-        font-weight: 500;
-        letter-spacing: 0.5px;
-        border-radius: 4px;
-        transition: all var(--transition);
-    }
-    .btn-outline-rose:hover {
-        background: var(--rose) !important;
-        color: var(--blanc) !important;
-        transform: translateY(-1px);
     }
     .hero-badge {
         position: absolute;
@@ -304,6 +288,19 @@
         text-transform: uppercase;
     }
 
+    /* ===== BANDEAU COOKIES ===== */
+    #cookie-banner {
+        position: fixed;
+        bottom: 50px;
+        left: 0;
+        right: 0;
+        z-index: 9999;
+        background: #1a1a1a;
+        color: rgba(255,255,255,0.85);
+        padding: 1rem 1.5rem;
+        font-size: 0.85rem;
+        box-shadow: 0 -4px 20px rgba(0,0,0,0.2);
+    }
 </style>
 {% endblock %}
 
@@ -332,11 +329,13 @@
                 <ul class="navbar-nav mx-auto gap-1">
                     <li class="nav-item"><a class="nav-link" href="{{ path('app_front_home') }}">Accueil</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ path('app_front_product_index') }}">Boutique</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Soins</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Analyse de peau</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Blog</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://www.fresha.com/fr/a/nice-kcream-beauty-angers-4-place-pierre-mendes-france-mh3yfeql" target="_blank" rel="noopener">Soins</a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="{{ path('app_front_analyse_peau') }}">Analyse de peau</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ path('app_front_blog_index') }}">Blog</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">À propos</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ path('app_front_contact') }}">Contact</a></li>
                 </ul>
                 <div class="d-flex align-items-center gap-2">
                     {% if app.user %}
@@ -356,8 +355,8 @@
                             </span>
                         {% endif %}
                     </a>
-                    <a href="https://share.google/XNtyVAzeKl9r4qIEV" target="_blank" class="btn btn-pink btn-hero d-flex align-items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <a href="https://share.google/XNtyVAzeKl9r4qIEV" target="_blank" rel="noopener" class="btn btn-pink btn-sm d-flex align-items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
                             <line x1="16" y1="2" x2="16" y2="6"/>
                             <line x1="8" y1="2" x2="8" y2="6"/>
@@ -382,6 +381,20 @@
                     <p class="small" style="color: rgba(255,255,255,0.6); line-height: 1.7;">
                         Institut spécialisé en beauté coréenne, soins experts et cosmétiques sélectionnés pour révéler l'éclat naturel de votre peau.
                     </p>
+                    <div class="d-flex gap-2 mt-3">
+                        <a href="https://www.instagram.com/nicekcreambeauty" target="_blank" rel="noopener"
+                           style="background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); color: white; padding: 0.4rem 0.75rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; text-decoration: none;">
+                            Instagram
+                        </a>
+                        <a href="https://www.tiktok.com/search?q=nice+k+cream+beauty" target="_blank" rel="noopener"
+                           style="background: #000; color: white; padding: 0.4rem 0.75rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; text-decoration: none;">
+                            TikTok
+                        </a>
+                        <a href="https://wa.me/33759691663" target="_blank" rel="noopener"
+                           style="background: #25D366; color: white; padding: 0.4rem 0.75rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; text-decoration: none;">
+                            WhatsApp
+                        </a>
+                    </div>
                 </div>
                 <div class="col-md-2 mb-4">
                     <h6>Boutique</h6>
@@ -399,25 +412,35 @@
                         <li class="mb-1"><a href="#">Épilation laser</a></li>
                         <li class="mb-1"><a href="#">Massages</a></li>
                         <li class="mb-1"><a href="#">Analyse de peau</a></li>
-                        <li class="mb-1"><a href="#">Réserver sur Fresha</a></li>
+                        <li class="mb-1"><a href="https://share.google/XNtyVAzeKl9r4qIEV" target="_blank" rel="noopener">Réserver sur Fresha</a></li>
                     </ul>
                 </div>
                 <div class="col-md-2 mb-4">
-                    <h6>À propos</h6>
+                    <h6>Informations</h6>
                     <ul class="list-unstyled">
-                        <li class="mb-1"><a href="#">Notre histoire</a></li>
-                        <li class="mb-1"><a href="#">Expertise</a></li>
-                        <li class="mb-1"><a href="#">Formation</a></li>
-                        <li class="mb-1"><a href="#">Le salon</a></li>
-                    </ul>
-                </div>
-                <div class="col-md-2 mb-4">
-                    <h6>Aide & infos</h6>
-                    <ul class="list-unstyled">
+                        <li class="mb-1"><a href="#">À propos</a></li>
+                        <li class="mb-1"><a href="{{ path('app_front_contact') }}">Contact</a></li>
                         <li class="mb-1"><a href="#">Livraison</a></li>
-                        <li class="mb-1"><a href="#">Retours & échanges</a></li>
+                        <li class="mb-1"><a href="{{ path('app_front_cgv') }}">Retours & échanges</a></li>
                         <li class="mb-1"><a href="#">FAQ</a></li>
-                        <li class="mb-1"><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h6>Contact</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-1" style="font-size:0.85rem; color:rgba(255,255,255,0.65);">
+                            📍 4 Place Pierre Mendès France<br>
+                            <span style="padding-left: 1.2rem;">49100 Angers</span>
+                        </li>
+                        <li class="mb-1 mt-2">
+                            <a href="tel:+33759691663">📞 +33 7 59 69 16 63</a>
+                        </li>
+                        <li class="mb-1">
+                            <a href="mailto:nicekreambeauty@gmail.com">✉️ nicekreambeauty@gmail.com</a>
+                        </li>
+                        <li class="mb-1 mt-1" style="font-size:0.8rem; color:rgba(255,255,255,0.45);">
+                            Lun–Sam : 10h30–18h30
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -426,12 +449,40 @@
                 <p class="small mb-0" style="color: rgba(255,255,255,0.4);">
                     &copy; {{ "now"|date("Y") }} Nice K'Cream Beauty — Tous droits réservés.
                 </p>
-                <div class="d-flex gap-3">
-                    <a href="#">Mentions légales</a>
-                    <a href="#">CGV</a>
-                    <a href="#">Politique de confidentialité</a>
+                <div class="d-flex gap-3 flex-wrap">
+                    <a href="{{ path('app_front_mentions_legales') }}">Mentions légales</a>
+                    <a href="{{ path('app_front_cgv') }}">CGV</a>
+                    <a href="{{ path('app_front_confidentialite') }}">Confidentialité</a>
+                    <a href="{{ path('app_front_cookies') }}">Cookies</a>
                 </div>
             </div>
         </div>
     </footer>
+
+    {# Bandeau cookies #}
+    <div id="cookie-banner" style="display:none;">
+        <div class="container d-flex align-items-center justify-content-between flex-wrap gap-3">
+            <p class="mb-0">
+                🍪 Ce site utilise des cookies strictement nécessaires à son fonctionnement (session, paiement).
+                <a href="{{ path('app_front_cookies') }}" style="color: var(--rose); text-decoration: underline;">En savoir plus</a>
+            </p>
+            <div class="d-flex gap-2 flex-shrink-0">
+                <button onclick="acceptCookies()" class="btn btn-pink btn-sm">Accepter</button>
+                <a href="{{ path('app_front_cookies') }}" class="btn btn-outline-light btn-sm">Paramétrer</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function acceptCookies() {
+            localStorage.setItem('cookies_accepted', '1');
+            document.getElementById('cookie-banner').style.display = 'none';
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!localStorage.getItem('cookies_accepted')) {
+                document.getElementById('cookie-banner').style.display = 'block';
+            }
+        });
+    </script>
+
 {% endblock %}

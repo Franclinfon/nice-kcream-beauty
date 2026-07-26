@@ -1,0 +1,42 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block page_title %}
+    Changer le statut — {{ order.numeroCommande }}
+{% endblock %}
+
+{% block main %}
+<div class="card" style="max-width: 500px;">
+    <div class="card-header">
+        <h5 class="mb-0">Commande {{ order.numeroCommande }}</h5>
+        <small class="text-muted">Statut actuel : <strong>{{ order.statut }}</strong></small>
+    </div>
+    <div class="card-body">
+        <form method="POST">
+            <div class="mb-3">
+                <label for="statut" class="form-label fw-bold">Nouveau statut</label>
+                <select name="statut" id="statut" class="form-select">
+                    {% for value, label in statuts %}
+                        <option value="{{ value }}" {% if value == order.statut %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="commentaire" class="form-label fw-bold">Commentaire <small class="text-muted">(optionnel)</small></label>
+                <textarea name="commentaire" id="commentaire" class="form-control" rows="3"
+                    placeholder="Ex: Colis remis à La Poste le 23/06/2026, numéro de suivi : XXXXXXX"></textarea>
+            </div>
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">
+                    Enregistrer le statut
+                </button>
+                <a href="{{ ea_url().setController('App\\Controller\\Admin\\OrderCrudController').setAction('detail').setEntityId(order.id).generateUrl() }}"
+                   class="btn btn-outline-secondary">
+                    Annuler
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
