@@ -111,31 +111,6 @@
             </div>
         </div>
 
-        {# Avis clients #}
-        {% set approvedReviews = product.reviews|filter(r => r.statut == 'approuve') %}
-        {% if approvedReviews|length > 0 %}
-            <hr class="my-5">
-            <h3 class="mb-4">Avis clients ({{ approvedReviews|length }})</h3>
-            <div class="row">
-                {% for review in approvedReviews %}
-                    <div class="col-md-6 mb-3">
-                        <div class="card border-0 shadow-sm h-100">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between mb-2">
-                                    <strong>{{ review.client.prenom }} {{ review.client.nom[0] }}.</strong>
-                                    <span>
-                                        {% for i in 1..5 %}
-                                            {{ i <= review.note ? '⭐' : '☆' }}
-                                        {% endfor %}
-                                    </span>
-                                </div>
-                                <p class="text-muted mb-0">{{ review.commentaire }}</p>
-                            </div>
-                        </div>
-                    </div>
-                {% endfor %}
-            </div>
-        {% endif %}
 
         {# Produits associés #}
         {% if product.relatedProducts|length > 0 %}

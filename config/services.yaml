@@ -14,6 +14,7 @@ services:
 
     App\Controller\Front\CheckoutController:
         arguments:
+            $stripePublicKey: '%stripe_public_key%'
             $stripeSecretKey: '%stripe_secret_key%'
         tags: ['controller.service_arguments']
 

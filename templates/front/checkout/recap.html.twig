@@ -47,17 +47,23 @@
                         <table class="table table-sm">
                             <tbody>
                                 {% for item in cartItems %}
-                                    <tr>
-                                        <td>{{ item.product.nom }} × {{ item.quantity }}</td>
-                                        <td class="text-end">{{ item.subtotal|number_format(2, ',', ' ') }} €</td>
-                                    </tr>
+                                <tr>
+                                    <td>
+                                        {% if item.type == 'coffret' %}
+                                            {{ item.coffret.nom }} × {{ item.quantity }}
+                                        {% else %}
+                                            {{ item.product.nom }} × {{ item.quantity }}
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-end">{{ item.subtotal|number_format(2, ',', ' ') }} €</td>
+                                </tr>
                                 {% endfor %}
                             </tbody>
                         </table>
                         <hr>
                         <div class="d-flex justify-content-between text-muted">
                             <span>Sous-total</span>
-                            <span>{{ cartTotal|number_format(2, ',', ' ') }} €</span>
+                            <span>{{ total|number_format(2, ',', ' ') }} €</span>
                         </div>
                         <div class="d-flex justify-content-between text-muted">
                             <span>Livraison</span>
@@ -66,7 +72,7 @@
                         <hr>
                         <div class="d-flex justify-content-between fw-bold fs-5">
                             <span>Total</span>
-                            <span style="color: #c95f83;">{{ grandTotal|number_format(2, ',', ' ') }} €</span>
+                            <span style="color: #c95f83;">{{ totalWithShipping|number_format(2, ',', ' ') }} €</span>
                         </div>
                     </div>
                 </div>

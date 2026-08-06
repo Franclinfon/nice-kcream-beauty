@@ -41,7 +41,6 @@
     .apropos-hero-img {
         border-radius: 16px;
         overflow: hidden;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.1);
         height: 380px;
     }
     .apropos-hero-img img {
@@ -304,11 +303,11 @@
                         Réserver un soin
                     </a>
                 </div>
-                <div class="col-lg-6">
-                    <div class="apropos-hero-img">
-                        <div class="apropos-hero-img-placeholder">
-                            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="1" opacity="0.4"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-                        </div>
+                <div class="col-lg-6 d-flex align-items-center">
+                    <div style="width:100%; height:380px; border-radius:16px; overflow:hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.1);">
+                        <img src="{{ asset('images/maison.png') }}"
+                            alt="Institut Nice K'Cream Beauty Angers"
+                            style="width:100%; height:100%; object-fit:cover; object-position: top;">
                     </div>
                 </div>
             </div>
@@ -332,9 +331,7 @@
                 </div>
                 <div class="col-lg-6">
                     <div class="histoire-img">
-                        <div class="histoire-img-placeholder">
-                            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="1" opacity="0.4"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-                        </div>
+                        <img src="{{ asset('images/vitrine.jpg') }}" alt="Vitrine Nice K'Cream Beauty">
                     </div>
                 </div>
             </div>

@@ -2,123 +2,121 @@
 
 namespace App\Controller\Front;
 
-use App\Entity\Address;
 use App\Entity\Order;
 use App\Entity\OrderItem;
+use App\Entity\OrderStatusHistory;
 use App\Repository\AddressRepository;
 use App\Service\CartService;
-use App\Service\CheckoutService;
 use Doctrine\ORM\EntityManagerInterface;
-use Stripe\Checkout\Session as StripeSession;
+use Stripe\Checkout\Session;
 use Stripe\Stripe;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[IsGranted('ROLE_USER')]
-final class CheckoutController extends AbstractController
+class CheckoutController extends AbstractController
 {
     public function __construct(
+        private string $stripePublicKey,
         private string $stripeSecretKey,
     ) {
     }
 
     #[Route('/commande/adresse', name: 'app_front_checkout_address')]
-    public function address(Request $request, AddressRepository $addressRepository, CheckoutService $checkoutService, CartService $cartService): Response
+    public function address(Request $request, AddressRepository $addressRepository): Response
     {
-        if (count($cartService->getCartItems()) === 0) {
-            $this->addFlash('error', 'Votre panier est vide.');
-
-            return $this->redirectToRoute('app_front_cart_index');
-        }
-
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $user = $this->getUser();
         $addresses = $addressRepository->findBy(['client' => $user]);
 
         if ($request->isMethod('POST')) {
-            $addressId = (int) $request->request->get('address_id');
-            $checkoutService->setAddressId($addressId);
-
-            return $this->redirectToRoute('app_front_checkout_delivery');
+            $addressId = $request->request->get('address_id');
+            if ($addressId) {
+                $request->getSession()->set('checkout_address_id', $addressId);
+                return $this->redirectToRoute('app_front_checkout_delivery');
+            }
         }
+
+        $selectedAddressId = $request->getSession()->get('checkout_address_id');
 
         return $this->render('front/checkout/address.html.twig', [
             'addresses' => $addresses,
-            'selectedAddressId' => $checkoutService->getAddressId(),
+            'selectedAddressId' => $selectedAddressId,
         ]);
     }
 
     #[Route('/commande/livraison', name: 'app_front_checkout_delivery')]
-    public function delivery(Request $request, CheckoutService $checkoutService, CartService $cartService): Response
+    public function delivery(Request $request, CartService $cartService): Response
     {
-        if (!$checkoutService->getAddressId()) {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+        if (!$request->getSession()->get('checkout_address_id')) {
             return $this->redirectToRoute('app_front_checkout_address');
         }
 
-        $cartTotal = $cartService->getTotal();
-
         if ($request->isMethod('POST')) {
-            $method = $request->request->get('delivery_method');
-            $checkoutService->setDeliveryMethod($method);
-
+            $method = $request->request->get('delivery_method', 'colissimo');
+            $request->getSession()->set('checkout_delivery_method', $method);
             return $this->redirectToRoute('app_front_checkout_recap');
         }
 
+        $total = $cartService->getTotal();
+        $colissimoCost = $total >= 70 ? 0.0 : 5.90;
+        $selectedMethod = $request->getSession()->get('checkout_delivery_method');
+
         return $this->render('front/checkout/delivery.html.twig', [
-            'cartTotal' => $cartTotal,
-            'colissimoCost' => $checkoutService->calculateShippingCost('colissimo', $cartTotal),
-            'selectedMethod' => $checkoutService->getDeliveryMethod(),
+            'selectedMethod' => $selectedMethod,
+            'colissimoCost'  => $colissimoCost,
+            'total'          => $total,
         ]);
     }
 
-    #[Route('/commande/recapitulatif', name: 'app_front_checkout_recap')]
+    #[Route('/commande/recapitulatif', name: 'app_front_checkout_recap', methods: ['GET', 'POST'])]
     public function recap(
         Request $request,
-        AddressRepository $addressRepository,
-        CheckoutService $checkoutService,
         CartService $cartService,
+        AddressRepository $addressRepository,
         EntityManagerInterface $entityManager,
     ): Response {
-        $addressId = $checkoutService->getAddressId();
-        $deliveryMethod = $checkoutService->getDeliveryMethod();
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
-        if (!$addressId || !$deliveryMethod) {
+        $session = $request->getSession();
+        $addressId = $session->get('checkout_address_id');
+        $deliveryMethod = $session->get('checkout_delivery_method', 'colissimo');
+
+        if (!$addressId) {
             return $this->redirectToRoute('app_front_checkout_address');
         }
 
         $address = $addressRepository->find($addressId);
-        $user = $this->getUser();
-
-        if (!$address || $address->getClient() !== $user) {
-            return $this->redirectToRoute('app_front_checkout_address');
-        }
-
         $cartItems = $cartService->getCartItems();
-        $cartTotal = $cartService->getTotal();
-        $shippingCost = $checkoutService->calculateShippingCost($deliveryMethod, $cartTotal);
+        $total = $cartService->getTotal();
+        $shippingCost = ($deliveryMethod === 'colissimo' && $total < 70) ? 5.90 : 0.0;
+        $totalWithShipping = $total + $shippingCost;
 
         if ($request->isMethod('POST')) {
-            $pendingOrderId = $checkoutService->getPendingOrderId();
-            $existingOrder = $pendingOrderId
-                ? $entityManager->getRepository(Order::class)->find($pendingOrderId)
-                : null;
+            $user = $this->getUser();
 
-            if ($existingOrder && $existingOrder->getStatut() === 'en_attente_paiement') {
-                return $this->redirectToRoute('app_front_checkout_payment', ['id' => $existingOrder->getId()]);
+            // Protection anti-doublon
+            $pendingOrderId = $session->get('pendingOrderId');
+            if ($pendingOrderId) {
+                return $this->redirectToRoute('app_front_checkout_payment_redirect', [
+                    'id' => $pendingOrderId,
+                ]);
             }
 
             $order = new Order();
             $order->setClient($user);
-            $order->setNumeroCommande('CMD-' . date('Ymd') . '-' . strtoupper(substr(uniqid(), -6)));
-            $order->setMontantTotal((string) ($cartTotal + $shippingCost));
+            $order->setNumeroCommande('CMD-' . strtoupper(date('Ymd')) . '-' . strtoupper(substr(uniqid(), -6)));
+            $order->setMontantTotal((string) $totalWithShipping);
             $order->setStatut('en_attente_paiement');
             $order->setDeliveryMethod($deliveryMethod);
             $order->setShippingCost((string) $shippingCost);
 
-            $order->setLivraisonNom($user->getNom() . ' ' . $user->getPrenom());
+            // Adresse de livraison
+            $order->setLivraisonNom($user->getPrenom() . ' ' . $user->getNom());
             $order->setLivraisonRue($address->getRue());
             $order->setLivraisonComplement($address->getComplement());
             $order->setLivraisonCodePostal($address->getCodePostal());
@@ -127,11 +125,21 @@ final class CheckoutController extends AbstractController
             $order->setLivraisonTelephone($user->getTelephone() ?? '');
             $order->setLivraisonEmail($user->getEmail());
 
+            // Articles — produits ET coffrets
             foreach ($cartItems as $item) {
                 $orderItem = new OrderItem();
-                $orderItem->setProduct($item['product']);
-                $orderItem->setNomProduit($item['product']->getNom());
-                $orderItem->setPrixUnitaire((string) ($item['product']->getPrixPromo() ?? $item['product']->getPrix()));
+
+                if ($item['type'] === 'coffret') {
+                    $coffret = $item['coffret'];
+                    $orderItem->setNomProduit('Coffret : ' . $coffret->getNom());
+                    $orderItem->setPrixUnitaire((string) $coffret->getPrix());
+                } else {
+                    $product = $item['product'];
+                    $orderItem->setProduct($product);
+                    $orderItem->setNomProduit($product->getNom());
+                    $orderItem->setPrixUnitaire((string) ($product->getPrixPromo() ?? $product->getPrix()));
+                }
+
                 $orderItem->setQuantite($item['quantity']);
                 $order->addOrderItem($orderItem);
             }
@@ -139,113 +147,82 @@ final class CheckoutController extends AbstractController
             $entityManager->persist($order);
             $entityManager->flush();
 
-            $checkoutService->setPendingOrderId($order->getId());
+            $session->set('pendingOrderId', $order->getId());
 
-            return $this->redirectToRoute('app_front_checkout_payment', ['id' => $order->getId()]);
+            // Stripe Checkout
+            Stripe::setApiKey($this->stripeSecretKey);
+
+            $lineItems = [];
+            foreach ($cartItems as $item) {
+                if ($item['type'] === 'coffret') {
+                    $lineItems[] = [
+                        'price_data' => [
+                            'currency' => 'eur',
+                            'product_data' => [
+                                'name' => 'Coffret : ' . $item['coffret']->getNom(),
+                            ],
+                            'unit_amount' => (int) round((float) $item['coffret']->getPrix() * 100),
+                        ],
+                        'quantity' => $item['quantity'],
+                    ];
+                } else {
+                    $prix = $item['product']->getPrixPromo() ?? $item['product']->getPrix();
+                    $lineItems[] = [
+                        'price_data' => [
+                            'currency' => 'eur',
+                            'product_data' => [
+                                'name' => $item['product']->getNom(),
+                            ],
+                            'unit_amount' => (int) round((float) $prix * 100),
+                        ],
+                        'quantity' => $item['quantity'],
+                    ];
+                }
+            }
+
+            // Frais de livraison
+            if ($shippingCost > 0) {
+                $lineItems[] = [
+                    'price_data' => [
+                        'currency' => 'eur',
+                        'product_data' => ['name' => 'Livraison Colissimo'],
+                        'unit_amount' => (int) round($shippingCost * 100),
+                    ],
+                    'quantity' => 1,
+                ];
+            }
+
+            $checkoutSession = Session::create([
+                'payment_method_types' => ['card'],
+                'line_items' => $lineItems,
+                'mode' => 'payment',
+                'customer_email' => $user->getEmail(),
+                'success_url' => $this->generateUrl('app_front_checkout_success', ['orderId' => $order->getId()], UrlGeneratorInterface::ABSOLUTE_URL),
+                'cancel_url' => $this->generateUrl('app_front_checkout_recap', [], UrlGeneratorInterface::ABSOLUTE_URL),
+                'metadata' => ['order_id' => $order->getId()],
+            ]);
+
+            return $this->redirect($checkoutSession->url);
         }
 
         return $this->render('front/checkout/recap.html.twig', [
-            'address' => $address,
-            'deliveryMethod' => $deliveryMethod,
-            'cartItems' => $cartItems,
-            'cartTotal' => $cartTotal,
-            'shippingCost' => $shippingCost,
-            'grandTotal' => $cartTotal + $shippingCost,
+            'cartItems'        => $cartItems,
+            'address'          => $address,
+            'deliveryMethod'   => $deliveryMethod,
+            'shippingCost'     => $shippingCost,
+            'total'            => $total,
+            'totalWithShipping' => $totalWithShipping,
         ]);
     }
 
-    #[Route('/commande/paiement/{id}', name: 'app_front_checkout_payment')]
-    public function payment(
-        int $id,
-        EntityManagerInterface $entityManager,
-    ): Response {
-        $order = $entityManager->getRepository(Order::class)->find($id);
-        $user = $this->getUser();
-
-        if (!$order || $order->getClient() !== $user || $order->getStatut() !== 'en_attente_paiement') {
-            return $this->redirectToRoute('app_front_home');
-        }
-
-        Stripe::setApiKey($this->stripeSecretKey);
-
-        $lineItems = [];
-
-        foreach ($order->getOrderItems() as $item) {
-            $lineItems[] = [
-                'price_data' => [
-                    'currency' => 'eur',
-                    'product_data' => [
-                        'name' => $item->getNomProduit(),
-                    ],
-                    'unit_amount' => (int) round((float) $item->getPrixUnitaire() * 100),
-                ],
-                'quantity' => $item->getQuantite(),
-            ];
-        }
-
-        if ((float) $order->getShippingCost() > 0) {
-            $lineItems[] = [
-                'price_data' => [
-                    'currency' => 'eur',
-                    'product_data' => [
-                        'name' => 'Livraison Colissimo',
-                    ],
-                    'unit_amount' => (int) round((float) $order->getShippingCost() * 100),
-                ],
-                'quantity' => 1,
-            ];
-        }
-
-        $session = StripeSession::create([
-            'payment_method_types' => ['card'],
-            'line_items' => $lineItems,
-            'mode' => 'payment',
-            'customer_email' => $user->getEmail(),
-            'success_url' => $this->generateUrl('app_front_checkout_success', ['id' => $order->getId()], UrlGeneratorInterface::ABSOLUTE_URL),
-            'cancel_url' => $this->generateUrl('app_front_checkout_cancel', ['id' => $order->getId()], UrlGeneratorInterface::ABSOLUTE_URL),
-            'metadata' => [
-                'order_id' => $order->getId(),
-                'order_numero' => $order->getNumeroCommande(),
-            ],
-        ]);
-
-        $order->setStripePaymentIntentId($session->id);
-        $entityManager->flush();
-
-        return $this->redirect($session->url, 303);
-    }
-
-    #[Route('/commande/succes/{id}', name: 'app_front_checkout_success')]
-    public function success(int $id, EntityManagerInterface $entityManager, CartService $cartService, CheckoutService $checkoutService): Response
+    #[Route('/commande/succes/{orderId}', name: 'app_front_checkout_success')]
+    public function success(int $orderId, Request $request, EntityManagerInterface $entityManager): Response
     {
-        $order = $entityManager->getRepository(Order::class)->find($id);
-        $user = $this->getUser();
+        $request->getSession()->remove('pendingOrderId');
 
-        if (!$order || $order->getClient() !== $user) {
-            return $this->redirectToRoute('app_front_home');
-        }
-
-        if ($order->getStatut() === 'payee') {
-            $cartService->clear();
-            $checkoutService->clear();
-        }
+        $order = $entityManager->getRepository(Order::class)->find($orderId);
 
         return $this->render('front/checkout/success.html.twig', [
-            'order' => $order,
-        ]);
-    }
-
-    #[Route('/commande/annule/{id}', name: 'app_front_checkout_cancel')]
-    public function cancel(int $id, EntityManagerInterface $entityManager): Response
-    {
-        $order = $entityManager->getRepository(Order::class)->find($id);
-        $user = $this->getUser();
-
-        if (!$order || $order->getClient() !== $user) {
-            return $this->redirectToRoute('app_front_home');
-        }
-
-        return $this->render('front/checkout/cancel.html.twig', [
             'order' => $order,
         ]);
     }
