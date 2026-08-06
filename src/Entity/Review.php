@@ -14,13 +14,8 @@ class Review
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'reviews')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Product $product = null;
-
-    #[ORM\ManyToOne(inversedBy: 'reviews')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?User $client = null;
+    #[ORM\Column(length: 100)]
+    private ?string $auteur = null;
 
     #[ORM\Column]
     private ?int $note = null;
@@ -28,8 +23,8 @@ class Review
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $commentaire = null;
 
-    #[ORM\Column(length: 20)]
-    private ?string $statut = null;
+    #[ORM\Column]
+    private ?bool $isVisible = true;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
@@ -37,83 +32,25 @@ class Review
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
-        $this->statut = 'en_attente';
+        $this->isVisible = true;
     }
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
+    public function getId(): ?int { return $this->id; }
 
-    public function getProduct(): ?Product
-    {
-        return $this->product;
-    }
+    public function getAuteur(): ?string { return $this->auteur; }
+    public function setAuteur(string $auteur): static { $this->auteur = $auteur; return $this; }
 
-    public function setProduct(?Product $product): static
-    {
-        $this->product = $product;
+    public function getNote(): ?int { return $this->note; }
+    public function setNote(int $note): static { $this->note = $note; return $this; }
 
-        return $this;
-    }
+    public function getCommentaire(): ?string { return $this->commentaire; }
+    public function setCommentaire(?string $commentaire): static { $this->commentaire = $commentaire; return $this; }
 
-    public function getClient(): ?User
-    {
-        return $this->client;
-    }
+    public function isVisible(): ?bool { return $this->isVisible; }
+    public function setIsVisible(bool $isVisible): static { $this->isVisible = $isVisible; return $this; }
 
-    public function setClient(?User $client): static
-    {
-        $this->client = $client;
+    public function getCreatedAt(): ?\DateTimeImmutable { return $this->createdAt; }
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static { $this->createdAt = $createdAt; return $this; }
 
-        return $this;
-    }
-
-    public function getNote(): ?int
-    {
-        return $this->note;
-    }
-
-    public function setNote(int $note): static
-    {
-        $this->note = $note;
-
-        return $this;
-    }
-
-    public function getCommentaire(): ?string
-    {
-        return $this->commentaire;
-    }
-
-    public function setCommentaire(?string $commentaire): static
-    {
-        $this->commentaire = $commentaire;
-
-        return $this;
-    }
-
-    public function getStatut(): ?string
-    {
-        return $this->statut;
-    }
-
-    public function setStatut(string $statut): static
-    {
-        $this->statut = $statut;
-
-        return $this;
-    }
-
-    public function getCreatedAt(): ?\DateTimeImmutable
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(\DateTimeImmutable $createdAt): static
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
+    public function __toString(): string { return $this->auteur ?? ''; }
 }

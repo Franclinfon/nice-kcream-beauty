@@ -17,20 +17,23 @@ class BeforeAfter
     #[ORM\Column(length: 150)]
     private ?string $titre = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $imageAvant = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $imageApres = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
     #[ORM\Column]
-    private ?bool $isActive = null;
+    private ?bool $isActive = true;
 
     #[ORM\Column]
-    private ?int $position = null;
+    private ?int $position = 0;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $updatedAt = null;
 
     public function __construct()
     {
@@ -38,80 +41,28 @@ class BeforeAfter
         $this->position = 0;
     }
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
+    public function getId(): ?int { return $this->id; }
 
-    public function getTitre(): ?string
-    {
-        return $this->titre;
-    }
+    public function getTitre(): ?string { return $this->titre; }
+    public function setTitre(string $titre): static { $this->titre = $titre; return $this; }
 
-    public function setTitre(string $titre): static
-    {
-        $this->titre = $titre;
+    public function getImageAvant(): ?string { return $this->imageAvant; }
+    public function setImageAvant(?string $imageAvant): static { $this->imageAvant = $imageAvant; return $this; }
 
-        return $this;
-    }
+    public function getImageApres(): ?string { return $this->imageApres; }
+    public function setImageApres(?string $imageApres): static { $this->imageApres = $imageApres; return $this; }
 
-    public function getImageAvant(): ?string
-    {
-        return $this->imageAvant;
-    }
+    public function getDescription(): ?string { return $this->description; }
+    public function setDescription(?string $description): static { $this->description = $description; return $this; }
 
-    public function setImageAvant(string $imageAvant): static
-    {
-        $this->imageAvant = $imageAvant;
+    public function isActive(): ?bool { return $this->isActive; }
+    public function setIsActive(bool $isActive): static { $this->isActive = $isActive; return $this; }
 
-        return $this;
-    }
+    public function getPosition(): ?int { return $this->position; }
+    public function setPosition(int $position): static { $this->position = $position; return $this; }
 
-    public function getImageApres(): ?string
-    {
-        return $this->imageApres;
-    }
+    public function getUpdatedAt(): ?\DateTimeImmutable { return $this->updatedAt; }
+    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static { $this->updatedAt = $updatedAt; return $this; }
 
-    public function setImageApres(string $imageApres): static
-    {
-        $this->imageApres = $imageApres;
-
-        return $this;
-    }
-
-    public function getDescription(): ?string
-    {
-        return $this->description;
-    }
-
-    public function setDescription(?string $description): static
-    {
-        $this->description = $description;
-
-        return $this;
-    }
-
-    public function isActive(): ?bool
-    {
-        return $this->isActive;
-    }
-
-    public function setIsActive(bool $isActive): static
-    {
-        $this->isActive = $isActive;
-
-        return $this;
-    }
-
-    public function getPosition(): ?int
-    {
-        return $this->position;
-    }
-
-    public function setPosition(int $position): static
-    {
-        $this->position = $position;
-
-        return $this;
-    }
+    public function __toString(): string { return $this->titre ?? ''; }
 }

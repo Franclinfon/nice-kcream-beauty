@@ -42,7 +42,7 @@ class ProductRepository extends ServiceEntityRepository
         }
 
         if ($promosOnly) {
-            $qb->andWhere('p.prixPromo IS NOT NULL');
+            $qb->andWhere('p.isPromo = true');
         }
 
         match ($sort) {

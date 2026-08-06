@@ -56,6 +56,9 @@ class Product
     private ?bool $isMiseEnAvant = null;
 
     #[ORM\Column]
+    private ?bool $isPromo = false;
+
+    #[ORM\Column]
     private ?bool $isActive = null;
 
     #[ORM\Column]
@@ -108,6 +111,7 @@ class Product
         $this->isNouveaute = false;
         $this->isCoffret = false;
         $this->isMiseEnAvant = false;
+        $this->isPromo = false;
         $this->isActive = true;
         $this->productImages = new ArrayCollection();
         $this->relatedProducts = new ArrayCollection();
@@ -279,6 +283,17 @@ class Product
     {
         $this->isMiseEnAvant = $isMiseEnAvant;
 
+        return $this;
+    }
+
+    public function isPromo(): ?bool
+    {
+        return $this->isPromo;
+    }
+
+    public function setIsPromo(bool $isPromo): static
+    {
+        $this->isPromo = $isPromo;
         return $this;
     }
 

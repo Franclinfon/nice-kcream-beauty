@@ -33,7 +33,7 @@ final class HomeController extends AbstractController
         );
 
         $reviews = $reviewRepository->findBy(
-            ['statut' => 'approuve'],
+            ['isVisible' => true],
             ['createdAt' => 'DESC'],
             4
         );

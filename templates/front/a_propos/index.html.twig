@@ -1,0 +1,586 @@
+{% extends 'front/base.html.twig' %}
+
+{% block title %}À propos — Nice K'Cream Beauty Angers{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    /* ===== HERO ===== */
+    .apropos-hero {
+        position: relative;
+        height: 480px;
+        background: linear-gradient(135deg, var(--rose-pale) 0%, #fdf6f0 100%);
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+    }
+    .apropos-hero::before {
+        content: '';
+        position: absolute;
+        top: -100px; right: -100px;
+        width: 500px; height: 500px;
+        border-radius: 50%;
+        background: rgba(201,95,131,0.06);
+    }
+    .apropos-hero-content { position: relative; z-index: 1; }
+    .apropos-hero h1 {
+        font-family: var(--font-titre);
+        font-size: clamp(2rem, 4vw, 3rem);
+        font-weight: 700;
+        color: var(--noir);
+        line-height: 1.2;
+        margin-bottom: 1rem;
+    }
+    .apropos-hero h1 span { color: var(--rose); font-style: italic; }
+    .apropos-hero p {
+        font-size: 1.05rem;
+        color: #4b5563;
+        margin-bottom: 2rem;
+        line-height: 1.7;
+    }
+    .apropos-hero-img {
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+        height: 380px;
+    }
+    .apropos-hero-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .apropos-hero-img-placeholder {
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #fde8f0, var(--rose-pale));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* ===== SECTION TITLES ===== */
+    .section-title-left {
+        font-family: var(--font-titre);
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: var(--noir);
+        margin-bottom: 0.5rem;
+    }
+    .section-title-center {
+        font-family: var(--font-titre);
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: var(--noir);
+        margin-bottom: 0.5rem;
+        text-align: center;
+    }
+    .divider-left {
+        display: inline-block;
+        width: 40px;
+        height: 2px;
+        background: var(--rose);
+        margin-bottom: 1.5rem;
+    }
+    .divider-center {
+        display: block;
+        width: 40px;
+        height: 2px;
+        background: var(--rose);
+        margin: 0 auto 1.5rem;
+    }
+
+    /* ===== HISTOIRE ===== */
+    .histoire-section { padding: 5rem 0; background: white; }
+    .histoire-text {
+        font-size: 1rem;
+        color: #4b5563;
+        line-height: 1.9;
+    }
+    .histoire-text p { margin-bottom: 1.25rem; }
+    .histoire-highlight {
+        background: var(--rose-pale);
+        border-left: 4px solid var(--rose);
+        padding: 1.25rem 1.5rem;
+        border-radius: 0 8px 8px 0;
+        font-style: italic;
+        font-size: 1rem;
+        color: var(--noir);
+        margin: 1.5rem 0;
+        line-height: 1.7;
+    }
+    .histoire-img {
+        border-radius: 16px;
+        overflow: hidden;
+        height: 350px;
+    }
+    .histoire-img img { width: 100%; height: 100%; object-fit: cover; }
+    .histoire-img-placeholder {
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, var(--rose-pale), #fdf6f0);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* ===== VALEURS ===== */
+    .valeurs-section { padding: 5rem 0; background: #fafafa; }
+    .valeur-card {
+        background: white;
+        border-radius: 12px;
+        padding: 2rem 1.5rem;
+        text-align: center;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+        height: 100%;
+        transition: all 0.3s ease;
+    }
+    .valeur-card:hover {
+        box-shadow: 0 8px 30px rgba(201,95,131,0.12);
+        transform: translateY(-3px);
+    }
+    .valeur-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        display: block;
+    }
+    .valeur-title {
+        font-family: var(--font-titre);
+        font-size: 1.05rem;
+        font-weight: 600;
+        color: var(--noir);
+        margin-bottom: 0.75rem;
+    }
+    .valeur-desc { font-size: 0.85rem; color: var(--gris); line-height: 1.6; margin: 0; }
+
+    /* ===== APPROCHE ===== */
+    .approche-section { padding: 5rem 0; background: white; }
+    .etape-approche {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        position: relative;
+    }
+    .etape-approche-num {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: var(--rose);
+        color: white;
+        font-family: var(--font-titre);
+        font-size: 1.3rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1rem;
+        box-shadow: 0 4px 15px rgba(201,95,131,0.3);
+    }
+    .etape-approche-title {
+        font-family: var(--font-corps);
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--noir);
+        letter-spacing: 0.5px;
+        margin-bottom: 0.4rem;
+    }
+    .etape-approche-desc { font-size: 0.78rem; color: var(--gris); line-height: 1.5; margin: 0; }
+    .etape-fleche {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding-top: 1.5rem;
+    }
+
+    /* ===== CHIFFRES ===== */
+    .chiffres-section { padding: 5rem 0; background: var(--rose-pale); }
+    .chiffre-card {
+        text-align: center;
+        padding: 2rem 1rem;
+    }
+    .chiffre-icon { font-size: 2rem; margin-bottom: 0.75rem; display: block; }
+    .chiffre-value {
+        font-family: var(--font-titre);
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: var(--rose);
+        margin-bottom: 0.4rem;
+    }
+    .chiffre-label { font-size: 0.85rem; color: var(--gris); }
+
+    /* ===== ENGAGEMENTS ===== */
+    .engagements-section { padding: 5rem 0; background: white; }
+    .engagement-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 0;
+        font-size: 0.9rem;
+        color: var(--noir);
+        border-bottom: 1px solid var(--rose-pale);
+    }
+    .engagement-item:last-child { border-bottom: none; }
+    .engagement-check {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: var(--rose-pale);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    /* ===== LOCALISATION ===== */
+    .localisation-section { padding: 5rem 0; background: #fafafa; }
+    .info-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    .info-item-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 10px;
+        background: var(--rose-pale);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+    .info-item-title {
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        color: var(--gris);
+        margin-bottom: 0.2rem;
+    }
+    .info-item-value { font-size: 0.9rem; color: var(--noir); margin: 0; }
+    .info-item-value a { color: var(--rose); text-decoration: none; }
+    .horaire-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid var(--rose-pale);
+        font-size: 0.85rem;
+    }
+    .horaire-item:last-child { border-bottom: none; }
+    .horaire-jour { font-weight: 500; color: var(--noir); }
+    .horaire-heure { color: var(--gris); }
+    .horaire-ferme { color: #d1d5db; font-style: italic; }
+
+    /* ===== CTA ===== */
+    .apropos-cta {
+        padding: 5rem 0;
+        background: var(--noir);
+        text-align: center;
+    }
+    .apropos-cta h2 {
+        font-family: var(--font-titre);
+        font-size: 2rem;
+        color: white;
+        margin-bottom: 1rem;
+    }
+    .apropos-cta h2 span { color: var(--rose); font-style: italic; }
+    .apropos-cta p { color: rgba(255,255,255,0.7); margin-bottom: 2rem; }
+</style>
+{% endblock %}
+
+{% block content %}
+
+    {# 1. HERO #}
+    <section class="apropos-hero">
+        <div class="container">
+            <div class="row align-items-center g-5">
+                <div class="col-lg-6 apropos-hero-content">
+                    <h1>À propos de<br><span>Nice K'Cream Beauty</span></h1>
+                    <p>Votre institut spécialisé en beauté coréenne à Angers.</p>
+                    <a href="https://www.fresha.com/fr/a/nice-kcream-beauty-angers-4-place-pierre-mendes-france-mh3yfeql"
+                       target="_blank" rel="noopener"
+                       class="btn btn-pink px-4 py-2 d-inline-flex align-items-center gap-2">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        Réserver un soin
+                    </a>
+                </div>
+                <div class="col-lg-6">
+                    <div class="apropos-hero-img">
+                        <div class="apropos-hero-img-placeholder">
+                            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="1" opacity="0.4"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {# 2. NOTRE HISTOIRE #}
+    <section class="histoire-section">
+        <div class="container">
+            <div class="row align-items-center g-5">
+                <div class="col-lg-6">
+                    <p class="section-title-left">Notre histoire</p>
+                    <div class="divider-left"></div>
+                    <div class="histoire-text">
+                        <p>Chez Nice K'Cream Beauty, nous croyons qu'une belle peau est avant tout une peau saine. Notre mission est d'apporter à Angers l'expertise de la cosmétique coréenne à travers une sélection de produits authentiques et des soins personnalisés adaptés à chaque type de peau.</p>
+                        <div class="histoire-highlight">
+                            « Chaque peau est unique. Notre engagement est de vous accompagner avec des soins et des produits adaptés à vos besoins réels, pas à une tendance du moment. »
+                        </div>
+                        <p>Installé au cœur d'Angers, notre institut a été créé avec une vision claire : rendre la K-Beauty accessible à toutes, avec des conseils experts, des produits sélectionnés avec soin et des soins réalisés par des professionnelles passionnées.</p>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="histoire-img">
+                        <div class="histoire-img-placeholder">
+                            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="1" opacity="0.4"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {# 3. NOS VALEURS #}
+    <section class="valeurs-section">
+        <div class="container">
+            <p class="section-title-center">Nos valeurs</p>
+            <div class="divider-center"></div>
+            <div class="row g-4">
+                <div class="col-6 col-md-3">
+                    <div class="valeur-card">
+                        <span class="valeur-icon">🌿</span>
+                        <p class="valeur-title">Produits authentiques</p>
+                        <p class="valeur-desc">Nous sélectionnons uniquement des marques coréennes reconnues pour leur efficacité et leur sécurité.</p>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="valeur-card">
+                        <span class="valeur-icon">💖</span>
+                        <p class="valeur-title">Conseil personnalisé</p>
+                        <p class="valeur-desc">Chaque peau est différente. Nos recommandations sont toujours adaptées à vos besoins spécifiques.</p>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="valeur-card">
+                        <span class="valeur-icon">🇰🇷</span>
+                        <p class="valeur-title">Expertise K-Beauty</p>
+                        <p class="valeur-desc">Inspirée des méthodes coréennes reconnues mondialement pour leur approche innovante et naturelle.</p>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="valeur-card">
+                        <span class="valeur-icon">✨</span>
+                        <p class="valeur-title">Qualité & Résultats</p>
+                        <p class="valeur-desc">Notre objectif est votre satisfaction et des résultats visibles, durables et respectueux de votre peau.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {# 4. NOTRE APPROCHE #}
+    <section class="approche-section">
+        <div class="container">
+            <p class="section-title-center">Notre approche</p>
+            <div class="divider-center"></div>
+            <div class="row align-items-start g-0">
+                <div class="col-6 col-md-3">
+                    <div class="etape-approche">
+                        <div class="etape-approche-num">1</div>
+                        <p class="etape-approche-title">Analyse de votre peau</p>
+                        <p class="etape-approche-desc">Diagnostic personnalisé pour identifier votre type de peau et vos besoins.</p>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="etape-approche">
+                        <div class="etape-approche-num">2</div>
+                        <p class="etape-approche-title">Conseils personnalisés</p>
+                        <p class="etape-approche-desc">Recommandations sur mesure adaptées à vos objectifs beauté.</p>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="etape-approche">
+                        <div class="etape-approche-num">3</div>
+                        <p class="etape-approche-title">Routine adaptée</p>
+                        <p class="etape-approche-desc">Construction d'une routine K-Beauty personnalisée et facile à suivre.</p>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="etape-approche">
+                        <div class="etape-approche-num">4</div>
+                        <p class="etape-approche-title">Résultats visibles</p>
+                        <p class="etape-approche-desc">Des résultats concrets et durables pour une peau saine et éclatante.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {# 5. CHIFFRES CLÉS #}
+    <section class="chiffres-section">
+        <div class="container">
+            <p class="section-title-center">Pourquoi choisir Nice K'Cream Beauty ?</p>
+            <div class="divider-center"></div>
+            <div class="row g-4">
+                <div class="col-6 col-md-3">
+                    <div class="chiffre-card">
+                        <span class="chiffre-icon">⭐</span>
+                        <p class="chiffre-value">5/5</p>
+                        <p class="chiffre-label">Note moyenne clientes</p>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="chiffre-card">
+                        <span class="chiffre-icon">🧴</span>
+                        <p class="chiffre-value">50+</p>
+                        <p class="chiffre-label">Marques coréennes sélectionnées</p>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="chiffre-card">
+                        <span class="chiffre-icon">📍</span>
+                        <p class="chiffre-value">Angers</p>
+                        <p class="chiffre-label">Au cœur de la ville</p>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="chiffre-card">
+                        <span class="chiffre-icon">💆</span>
+                        <p class="chiffre-value">100%</p>
+                        <p class="chiffre-label">Diagnostic personnalisé</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {# 6. NOS ENGAGEMENTS #}
+    <section class="engagements-section">
+        <div class="container">
+            <div class="row align-items-center g-5">
+                <div class="col-lg-6">
+                    <p class="section-title-left">Nos engagements</p>
+                    <div class="divider-left"></div>
+                    <div class="engagement-item">
+                        <div class="engagement-check">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
+                        <span>Produits 100% authentiques, directement sélectionnés</span>
+                    </div>
+                    <div class="engagement-item">
+                        <div class="engagement-check">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
+                        <span>Paiement sécurisé via Stripe (CB, Apple Pay, Google Pay)</span>
+                    </div>
+                    <div class="engagement-item">
+                        <div class="engagement-check">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
+                        <span>Conseils personnalisés adaptés à chaque type de peau</span>
+                    </div>
+                    <div class="engagement-item">
+                        <div class="engagement-check">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
+                        <span>Hygiène irréprochable dans tous nos soins</span>
+                    </div>
+                    <div class="engagement-item">
+                        <div class="engagement-check">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
+                        <span>Livraison rapide Colissimo — gratuite dès 70€</span>
+                    </div>
+                    <div class="engagement-item">
+                        <div class="engagement-check">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
+                        <span>Service client disponible du lundi au samedi</span>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div style="background: var(--rose-pale); border-radius: 16px; padding: 2.5rem;">
+                        <p style="font-family: var(--font-titre); font-size: 1.3rem; color: var(--noir); margin-bottom: 1.5rem; font-weight: 600;">Notre promesse</p>
+                        <p style="font-size: 0.95rem; color: #4b5563; line-height: 1.8; margin-bottom: 1.25rem;">
+                            Chez Nice K'Cream Beauty, chaque cliente est accueillie avec attention et bienveillance. Nous prenons le temps de comprendre votre peau, vos habitudes et vos objectifs avant de vous proposer la moindre recommandation.
+                        </p>
+                        <p style="font-size: 0.95rem; color: #4b5563; line-height: 1.8; margin: 0;">
+                            Parce que votre satisfaction et votre bien-être sont au cœur de tout ce que nous faisons.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {# 7. OÙ NOUS TROUVER #}
+    <section class="localisation-section">
+        <div class="container">
+            <p class="section-title-center">Où nous trouver ?</p>
+            <div class="divider-center"></div>
+            <div class="row g-5 justify-content-center">
+                <div class="col-lg-5">
+                    <div class="info-item">
+                        <div class="info-item-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="1.8"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+                        </div>
+                        <div>
+                            <p class="info-item-title">Adresse</p>
+                            <p class="info-item-value">4 Place Pierre Mendès France<br>49100 Angers, France</p>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-item-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="1.8"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.81a16 16 0 0 0 6 6l.91-1.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.73 15l.19 1.92z"/></svg>
+                        </div>
+                        <div>
+                            <p class="info-item-title">Téléphone & WhatsApp</p>
+                            <p class="info-item-value"><a href="tel:+33759691663">+33 7 59 69 16 63</a></p>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-item-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="1.8"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                        </div>
+                        <div>
+                            <p class="info-item-title">Email</p>
+                            <p class="info-item-value"><a href="mailto:nicekreambeauty@gmail.com">nicekreambeauty@gmail.com</a></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-5">
+                    <div style="background: white; border-radius: 12px; padding: 1.5rem; box-shadow: var(--shadow);">
+                        <p style="font-size: 0.72rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gris); margin-bottom: 1rem;">Horaires d'ouverture</p>
+                        <div class="horaire-item"><span class="horaire-jour">Lundi</span><span class="horaire-heure">10:30 – 12:30 / 13:30 – 18:30</span></div>
+                        <div class="horaire-item"><span class="horaire-jour">Mardi</span><span class="horaire-heure">10:30 – 12:30 / 13:30 – 18:30</span></div>
+                        <div class="horaire-item"><span class="horaire-jour">Mercredi</span><span class="horaire-heure">10:30 – 12:30 / 13:30 – 18:30</span></div>
+                        <div class="horaire-item"><span class="horaire-jour">Jeudi</span><span class="horaire-heure">10:30 – 12:30 / 13:30 – 18:30</span></div>
+                        <div class="horaire-item"><span class="horaire-jour">Vendredi</span><span class="horaire-heure">10:30 – 12:30 / 13:30 – 18:30</span></div>
+                        <div class="horaire-item"><span class="horaire-jour">Samedi</span><span class="horaire-heure">10:30 – 12:30 / 13:30 – 18:30</span></div>
+                        <div class="horaire-item"><span class="horaire-jour horaire-ferme">Dimanche</span><span class="horaire-ferme">Fermé</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {# 8. CTA FINAL #}
+    <section class="apropos-cta">
+        <div class="container">
+            <h2>Prête à révéler l'éclat<br><span>naturel de votre peau ?</span></h2>
+            <p>Rejoignez nos clientes satisfaites et découvrez la K-Beauty à Angers.</p>
+            <div class="d-flex gap-3 justify-content-center flex-wrap">
+                <a href="{{ path('app_front_product_index') }}" class="btn btn-outline-light px-4 py-2">
+                    Découvrir la boutique
+                </a>
+                <a href="https://www.fresha.com/fr/a/nice-kcream-beauty-angers-4-place-pierre-mendes-france-mh3yfeql"
+                   target="_blank" rel="noopener"
+                   class="btn btn-pink px-4 py-2">
+                    Réserver un soin
+                </a>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}

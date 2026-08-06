@@ -13,3 +13,11 @@ vich_uploader:
             uri_prefix: /uploads/blog
             upload_destination: '%kernel.project_dir%/public/uploads/blog'
             namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
+        before_after_avant:
+            uri_prefix: /uploads/before_after
+            upload_destination: '%kernel.project_dir%/public/uploads/before_after'
+            namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
+        before_after_apres:
+            uri_prefix: /uploads/before_after
+            upload_destination: '%kernel.project_dir%/public/uploads/before_after'
+            namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
