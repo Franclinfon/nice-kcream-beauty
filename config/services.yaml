@@ -29,3 +29,7 @@ services:
             $mailerFrom: '%env(MAILER_FROM)%'
             $mailerAdmin1: '%env(MAILER_ADMIN_1)%'
             $mailerAdmin2: '%env(MAILER_ADMIN_2)%'
+
+    App\Command\ImportProductImagesCommand:
+        arguments:
+            $projectDir: '%kernel.project_dir%'

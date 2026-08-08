@@ -110,38 +110,6 @@
                 </div>
             </div>
         </div>
-
-
-        {# Produits associés #}
-        {% if product.relatedProducts|length > 0 %}
-            <hr class="my-5">
-            <h3 class="mb-4">Vous pourriez aussi aimer</h3>
-            <div class="row">
-                {% for related in product.relatedProducts %}
-                    <div class="col-md-3 mb-4">
-                        <div class="card h-100 border-0 shadow-sm">
-                            <a href="{{ path('app_front_product_show', {slug: related.slug}) }}" class="text-decoration-none text-dark">
-                                {% if related.mainImage %}
-                                    <img src="{{ asset('uploads/products/' ~ related.mainImage.filename) }}"
-                                        class="card-img-top" style="height: 180px; object-fit: cover;" alt="{{ related.nom }}">
-                                {% endif %}
-                                <div class="card-body text-center">
-                                    <h6 class="card-title">{{ related.nom }}</h6>
-                                    {% if related.prixPromo %}
-                                        <p class="mb-0">
-                                            <span class="text-decoration-line-through text-muted small">{{ related.prix|number_format(2, ',', ' ') }} €</span>
-                                            <span class="fw-bold ms-1" style="color: #c95f83;">{{ related.prixPromo|number_format(2, ',', ' ') }} €</span>
-                                        </p>
-                                    {% else %}
-                                        <p class="fw-bold mb-0" style="color: #c95f83;">{{ related.prix|number_format(2, ',', ' ') }} €</p>
-                                    {% endif %}
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                {% endfor %}
-            </div>
-        {% endif %}
     </div>
 
     <script>
