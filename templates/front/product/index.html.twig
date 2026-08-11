@@ -21,43 +21,58 @@
                 {% endif %}
             </form>
 
-            {# Catégories #}
-            <h6 class="fw-bold mb-3">Catégories</h6>
-            <ul class="list-unstyled mb-4">
-                <li class="mb-2">
-                    <a href="{{ path('app_front_product_index') }}" class="text-decoration-none {{ currentCategorySlug is null and not nouveautesOnly and not promosOnly ? 'fw-bold' : 'text-muted' }}">
-                        Tous les produits
-                    </a>
-                </li>
-                {% for category in categories %}
-                    <li class="mb-2">
-                        <a href="{{ path('app_front_product_index', {categorie: category.slug}) }}" class="text-decoration-none {{ currentCategorySlug == category.slug ? 'fw-bold' : 'text-muted' }}">
-                            {{ category.nom }}
-                        </a>
-                    </li>
-                {% endfor %}
-            </ul>
+            {# Catégories — collapsible sur mobile #}
+            <div class="mb-4">
+                <button class="btn btn-outline-secondary w-100 d-md-none mb-2" 
+                        type="button" 
+                        data-bs-toggle="collapse" 
+                        data-bs-target="#categoriesCollapse">
+                    Catégories & Filtres 
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
 
-            {# Filtres rapides #}
-            <h6 class="fw-bold mb-3">Filtres</h6>
-            <ul class="list-unstyled mb-4">
-                <li class="mb-2">
-                    <a href="{{ path('app_front_product_index', {nouveautes: 1}) }}" class="text-decoration-none {{ nouveautesOnly ? 'fw-bold' : 'text-muted' }}">
-                        🆕 Nouveautés
-                    </a>
-                </li>
-                <li class="mb-2">
-                    <a href="{{ path('app_front_product_index', {promos: 1}) }}" class="text-decoration-none {{ promosOnly ? 'fw-bold' : 'text-muted' }}">
-                        🏷️ Promotions
-                    </a>
-                </li>
-                <li class="mb-2">
-                    <a href="{{ path('app_front_coffret_index') }}" class="text-decoration-none text-muted">
-                        🎁 Coffrets
-                    </a>
-                </li>
-            </ul>
-        </div>
+                <div class="collapse d-md-block" id="categoriesCollapse">
+                    <p class="fw-bold mb-2 d-none d-md-block">Catégories</p>
+                    <ul class="list-unstyled">
+                        <li class="mb-1">
+                            <a href="{{ path('app_front_product_index') }}"
+                            class="text-decoration-none {{ not currentCategorySlug and not nouveautesOnly and not promosOnly ? 'fw-bold text-danger' : 'text-muted' }}">
+                                Tous les produits
+                            </a>
+                        </li>
+                        {% for category in categories %}
+                        <li class="mb-1">
+                            <a href="{{ path('app_front_product_index', {categorie: category.slug}) }}"
+                            class="text-decoration-none {{ currentCategorySlug == category.slug ? 'fw-bold text-danger' : 'text-muted' }}">
+                                {{ category.nom }}
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+
+                    <p class="fw-bold mb-2 mt-3">Filtres</p>
+                    <ul class="list-unstyled">
+                        <li class="mb-1">
+                            <a href="{{ path('app_front_product_index', {nouveautes: 1}) }}"
+                            class="text-decoration-none {{ nouveautesOnly ? 'fw-bold text-danger' : 'text-muted' }}">
+                                🆕 Nouveautés
+                            </a>
+                        </li>
+                        <li class="mb-1">
+                            <a href="{{ path('app_front_product_index', {promos: 1}) }}"
+                            class="text-decoration-none {{ promosOnly ? 'fw-bold text-danger' : 'text-muted' }}">
+                                🏷️ <strong>Promotions</strong>
+                            </a>
+                        </li>
+                        <li class="mb-1">
+                            <a href="{{ path('app_front_coffret_index') }}"
+                            class="text-decoration-none text-muted">
+                                🎁 Coffrets
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
 
         {# Grille produits #}
         <div class="col-md-9">
