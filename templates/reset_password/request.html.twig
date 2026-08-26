@@ -1,0 +1,88 @@
+{% extends 'front/base.html.twig' %}
+
+{% block title %}Mot de passe oublié — Nice K'Cream Beauty{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .auth-card {
+        background: white;
+        border-radius: 16px;
+        padding: 2.5rem;
+        box-shadow: 0 4px 30px rgba(0,0,0,0.07);
+        max-width: 480px;
+        margin: 0 auto;
+    }
+    .auth-title {
+        font-family: var(--font-titre);
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--noir);
+        margin-bottom: 0.5rem;
+    }
+    .auth-subtitle {
+        font-size: 0.85rem;
+        color: var(--gris);
+        margin-bottom: 2rem;
+        line-height: 1.6;
+    }
+    .auth-label {
+        font-size: 0.8rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        color: var(--gris);
+        margin-bottom: 0.4rem;
+        display: block;
+    }
+    .auth-input {
+        width: 100%;
+        border: 1.5px solid #e5e7eb;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        padding: 0.65rem 0.9rem;
+        transition: border-color 0.2s;
+        outline: none;
+    }
+    .auth-input:focus {
+        border-color: var(--rose);
+        box-shadow: 0 0 0 3px rgba(201, 95, 131, 0.1);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5" style="background:#fafafa; min-height:80vh;">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="auth-card">
+                <h1 class="auth-title">Mot de passe oublié</h1>
+                <p class="auth-subtitle">
+                    Entrez votre adresse email et nous vous enverrons un lien pour réinitialiser votre mot de passe.
+                </p>
+
+                {% for flashMessage in app.flashes('reset_password_error') %}
+                    <div class="alert alert-danger mb-3">{{ flashMessage }}</div>
+                {% endfor %}
+
+                {{ form_start(requestForm) }}
+                    <div class="mb-4">
+                        <label class="auth-label">Votre adresse email</label>
+                        {{ form_widget(requestForm.email, {attr: {class: 'auth-input', placeholder: 'marie@exemple.fr'}}) }}
+                        {{ form_errors(requestForm.email) }}
+                    </div>
+                    <button type="submit" class="btn btn-pink w-100" style="padding:0.85rem;">
+                        Envoyer le lien de réinitialisation
+                    </button>
+                {{ form_end(requestForm) }}
+
+                <p class="text-center mt-4" style="font-size:0.85rem; color:var(--gris);">
+                    <a href="{{ path('app_login') }}" style="color:var(--rose); font-weight:600;">
+                        ← Retour à la connexion
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

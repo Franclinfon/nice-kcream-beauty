@@ -1,0 +1,78 @@
+{% extends 'front/base.html.twig' %}
+
+{% block title %}Nouveau mot de passe — Nice K'Cream Beauty{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .auth-card {
+        background: white;
+        border-radius: 16px;
+        padding: 2.5rem;
+        box-shadow: 0 4px 30px rgba(0,0,0,0.07);
+    }
+    .auth-title {
+        font-family: var(--font-titre);
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--noir);
+        margin-bottom: 0.5rem;
+    }
+    .auth-subtitle {
+        font-size: 0.85rem;
+        color: var(--gris);
+        margin-bottom: 2rem;
+    }
+    .auth-label {
+        font-size: 0.8rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        color: var(--gris);
+        margin-bottom: 0.4rem;
+        display: block;
+    }
+    .auth-input {
+        width: 100%;
+        border: 1.5px solid #e5e7eb;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        padding: 0.65rem 0.9rem;
+        transition: border-color 0.2s;
+        outline: none;
+    }
+    .auth-input:focus {
+        border-color: var(--rose);
+        box-shadow: 0 0 0 3px rgba(201, 95, 131, 0.1);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5" style="background:#fafafa; min-height:80vh;">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="auth-card">
+                <h1 class="auth-title">Nouveau mot de passe</h1>
+                <p class="auth-subtitle">Choisissez un mot de passe sécurisé d'au moins 8 caractères.</p>
+
+                {{ form_start(resetForm) }}
+                    <div class="mb-3">
+                        <label class="auth-label">Nouveau mot de passe</label>
+                        {{ form_widget(resetForm.plainPassword.first, {attr: {class: 'auth-input', placeholder: '••••••••'}}) }}
+                        {{ form_errors(resetForm.plainPassword.first) }}
+                    </div>
+                    <div class="mb-4">
+                        <label class="auth-label">Confirmer le mot de passe</label>
+                        {{ form_widget(resetForm.plainPassword.second, {attr: {class: 'auth-input', placeholder: '••••••••'}}) }}
+                        {{ form_errors(resetForm.plainPassword.second) }}
+                    </div>
+                    <button type="submit" class="btn btn-pink w-100" style="padding:0.85rem;">
+                        Réinitialiser mon mot de passe
+                    </button>
+                {{ form_end(resetForm) }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
