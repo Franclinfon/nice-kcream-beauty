@@ -2,6 +2,28 @@
 
 {% block title %}Boutique — Nice K'Cream Beauty{% endblock %}
 
+{% block stylesheets %}
+{{ parent() }}
+<style>
+.pagination .page-link {
+    color: var(--rose);
+    border-color: #e5e7eb;
+    border-radius: 6px;
+    margin: 0 2px;
+    font-size: 0.85rem;
+}
+.pagination .page-item.active .page-link {
+    background-color: var(--rose) !important;
+    border-color: var(--rose) !important;
+    color: white !important;
+}
+.pagination .page-link:hover {
+    background-color: var(--rose-pale);
+    color: var(--rose);
+}
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="container py-5">
     <h1 class="mb-4">Boutique</h1>
@@ -13,7 +35,8 @@
             {# Recherche #}
             <form method="get" action="{{ path('app_front_product_index') }}" class="mb-4">
                 <div class="input-group">
-                    <input type="text" name="q" value="{{ currentSearch ?? '' }}" class="form-control" placeholder="Rechercher...">
+                    <input type="text" name="q" value="{{ currentSearch ?? '' }}"
+                           class="form-control" placeholder="Rechercher...">
                     <button type="submit" class="btn btn-outline-secondary">🔍</button>
                 </div>
                 {% if currentCategorySlug %}
@@ -23,12 +46,14 @@
 
             {# Catégories — collapsible sur mobile #}
             <div class="mb-4">
-                <button class="btn btn-outline-secondary w-100 d-md-none mb-2" 
-                        type="button" 
-                        data-bs-toggle="collapse" 
+                <button class="btn btn-outline-secondary w-100 d-md-none mb-2"
+                        type="button"
+                        data-bs-toggle="collapse"
                         data-bs-target="#categoriesCollapse">
-                    Catégories & Filtres 
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                    Catégories & Filtres
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"/>
+                    </svg>
                 </button>
 
                 <div class="collapse d-md-block" id="categoriesCollapse">
@@ -36,14 +61,14 @@
                     <ul class="list-unstyled">
                         <li class="mb-1">
                             <a href="{{ path('app_front_product_index') }}"
-                            class="text-decoration-none {{ not currentCategorySlug and not nouveautesOnly and not promosOnly ? 'fw-bold text-danger' : 'text-muted' }}">
+                               class="text-decoration-none {{ not currentCategorySlug and not nouveautesOnly and not promosOnly ? 'fw-bold text-danger' : 'text-muted' }}">
                                 Tous les produits
                             </a>
                         </li>
                         {% for category in categories %}
                         <li class="mb-1">
                             <a href="{{ path('app_front_product_index', {categorie: category.slug}) }}"
-                            class="text-decoration-none {{ currentCategorySlug == category.slug ? 'fw-bold text-danger' : 'text-muted' }}">
+                               class="text-decoration-none {{ currentCategorySlug == category.slug ? 'fw-bold text-danger' : 'text-muted' }}">
                                 {{ category.nom }}
                             </a>
                         </li>
@@ -54,19 +79,19 @@
                     <ul class="list-unstyled">
                         <li class="mb-1">
                             <a href="{{ path('app_front_product_index', {nouveautes: 1}) }}"
-                            class="text-decoration-none {{ nouveautesOnly ? 'fw-bold text-danger' : 'text-muted' }}">
+                               class="text-decoration-none {{ nouveautesOnly ? 'fw-bold text-danger' : 'text-muted' }}">
                                 🆕 Nouveautés
                             </a>
                         </li>
                         <li class="mb-1">
                             <a href="{{ path('app_front_product_index', {promos: 1}) }}"
-                            class="text-decoration-none {{ promosOnly ? 'fw-bold text-danger' : 'text-muted' }}">
+                               class="text-decoration-none {{ promosOnly ? 'fw-bold text-danger' : 'text-muted' }}">
                                 🏷️ <strong>Promotions</strong>
                             </a>
                         </li>
                         <li class="mb-1">
                             <a href="{{ path('app_front_coffret_index') }}"
-                            class="text-decoration-none text-muted">
+                               class="text-decoration-none text-muted">
                                 🎁 Coffrets
                             </a>
                         </li>
@@ -74,12 +99,16 @@
                 </div>
             </div>
 
+        </div>{# fin col-md-3 #}
+
         {# Grille produits #}
         <div class="col-md-9">
 
             {# Barre de tri + résultats #}
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <span class="text-muted small">{{ products|length }} produit{{ products|length > 1 ? 's' : '' }} trouvé{{ products|length > 1 ? 's' : '' }}</span>
+                <span class="text-muted small">
+                    {{ pagination.getTotalItemCount() }} produit{{ pagination.getTotalItemCount() > 1 ? 's' : '' }} trouvé{{ pagination.getTotalItemCount() > 1 ? 's' : '' }}
+                </span>
                 <form method="get" action="{{ path('app_front_product_index') }}" class="d-flex align-items-center gap-2">
                     {% if currentCategorySlug %}<input type="hidden" name="categorie" value="{{ currentCategorySlug }}">{% endif %}
                     {% if currentSearch %}<input type="hidden" name="q" value="{{ currentSearch }}">{% endif %}
@@ -100,15 +129,16 @@
                 </div>
             {% endif %}
 
+            {# Grille #}
             <div class="row">
-                {% for product in products %}
+                {% for product in pagination %}
                     <div class="col-md-4 mb-4">
                         <div class="card h-100 border-0 shadow-sm position-relative">
 
                             {# Badges #}
-                            <div class="position-absolute top-0 start-0 p-2 d-flex flex-column gap-1" style="z-index: 1;">
+                            <div class="position-absolute top-0 start-0 p-2 d-flex flex-column gap-1" style="z-index:1;">
                                 {% if product.isNouveaute %}
-                                    <span class="badge" style="background-color: #2d2d2d;">NOUVEAU</span>
+                                    <span class="badge" style="background-color:#2d2d2d;">NOUVEAU</span>
                                 {% endif %}
                                 {% if product.prixPromo %}
                                     {% set discount = ((product.prix - product.prixPromo) / product.prix * 100)|round %}
@@ -118,9 +148,11 @@
 
                             <a href="{{ path('app_front_product_show', {slug: product.slug}) }}" class="text-decoration-none text-dark">
                                 {% if product.mainImage %}
-                                    <img src="{{ asset('uploads/products/' ~ product.mainImage.filename) }}" class="card-img-top" alt="{{ product.nom }}" style="height: 220px; object-fit: cover;">
+                                    <img src="{{ asset('uploads/products/' ~ product.mainImage.filename) }}"
+                                         class="card-img-top" alt="{{ product.nom }}"
+                                         style="height:220px; object-fit:cover;">
                                 {% else %}
-                                    <div class="bg-light d-flex align-items-center justify-content-center" style="height: 220px;">
+                                    <div class="bg-light d-flex align-items-center justify-content-center" style="height:220px;">
                                         <span class="text-muted">Pas d'image</span>
                                     </div>
                                 {% endif %}
@@ -131,15 +163,15 @@
                                     {% if product.prixPromo %}
                                         <p class="mb-0">
                                             <span class="text-decoration-line-through text-muted small">{{ product.prix|number_format(2, ',', ' ') }} €</span>
-                                            <span class="fw-bold ms-1" style="color: #c95f83;">{{ product.prixPromo|number_format(2, ',', ' ') }} €</span>
+                                            <span class="fw-bold ms-1" style="color:#c95f83;">{{ product.prixPromo|number_format(2, ',', ' ') }} €</span>
                                         </p>
                                     {% else %}
-                                        <p class="fw-bold mb-0" style="color: #c95f83;">{{ product.prix|number_format(2, ',', ' ') }} €</p>
+                                        <p class="fw-bold mb-0" style="color:#c95f83;">{{ product.prix|number_format(2, ',', ' ') }} €</p>
                                     {% endif %}
                                 </div>
                             </a>
 
-                            {# Bouton ajout panier #}
+                            {# Bouton panier #}
                             <div class="card-footer bg-white border-0 text-center pb-3">
                                 {% if not product.isRupture %}
                                     <form action="{{ path('app_front_cart_add', {id: product.id}) }}" method="post">
@@ -161,7 +193,20 @@
                     </div>
                 {% endfor %}
             </div>
-        </div>
+            {# Pagination #}
+            {% if pagination.getTotalItemCount() > 0 %}
+            <div class="d-flex flex-column align-items-center mt-5 gap-2">
+                <p class="text-muted small mb-1">
+                    Page {{ pagination.getCurrentPageNumber() }} sur {{ pagination.getPageCount() }}
+                    — {{ pagination.getTotalItemCount() }} produits au total
+                </p>
+                <nav>
+                    {{ knp_pagination_render(pagination) }}
+                </nav>
+            </div>
+            {% endif %}
+
+        </div>{# fin col-md-9 #}
     </div>
 </div>
 {% endblock %}

@@ -4,6 +4,7 @@ namespace App\Controller\Front;
 
 use App\Repository\CategoryRepository;
 use App\Repository\ProductRepository;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -12,15 +13,19 @@ use Symfony\Component\Routing\Attribute\Route;
 final class ProductController extends AbstractController
 {
     #[Route('/boutique', name: 'app_front_product_index')]
-    public function index(Request $request, ProductRepository $productRepository, CategoryRepository $categoryRepository): Response
-    {
+    public function index(
+        Request $request,
+        ProductRepository $productRepository,
+        CategoryRepository $categoryRepository,
+        PaginatorInterface $paginator,
+    ): Response {
         $categorySlug = $request->query->get('categorie');
         $search = $request->query->get('q');
         $sort = $request->query->get('tri', 'nouveautes');
         $nouveautesOnly = $request->query->getBoolean('nouveautes');
         $promosOnly = $request->query->getBoolean('promos');
 
-        $products = $productRepository->findFiltered(
+        $productsQuery = $productRepository->findFilteredQuery(
             categorySlug: $categorySlug,
             search: $search,
             sort: $sort,
@@ -28,16 +33,22 @@ final class ProductController extends AbstractController
             promosOnly: $promosOnly,
         );
 
+        $pagination = $paginator->paginate(
+            $productsQuery,
+            $request->query->getInt('page', 1),
+            12
+        );
+
         $categories = $categoryRepository->findAll();
 
         return $this->render('front/product/index.html.twig', [
-            'products' => $products,
-            'categories' => $categories,
+            'pagination'          => $pagination,
+            'categories'          => $categories,
             'currentCategorySlug' => $categorySlug,
-            'currentSearch' => $search,
-            'currentSort' => $sort,
-            'nouveautesOnly' => $nouveautesOnly,
-            'promosOnly' => $promosOnly,
+            'currentSearch'       => $search,
+            'currentSort'         => $sort,
+            'nouveautesOnly'      => $nouveautesOnly,
+            'promosOnly'          => $promosOnly,
         ]);
     }
 
