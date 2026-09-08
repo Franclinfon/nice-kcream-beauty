@@ -149,10 +149,10 @@
                             <a href="{{ path('app_front_product_show', {slug: product.slug}) }}" class="text-decoration-none text-dark">
                                 {% if product.mainImage %}
                                     <img src="{{ asset('uploads/products/' ~ product.mainImage.filename) }}"
-                                         class="card-img-top" alt="{{ product.nom }}"
-                                         style="height:220px; object-fit:cover;">
+                                        class="card-img-top" alt="{{ product.nom }}"
+                                        style="aspect-ratio: 1 / 1; width: 100%; object-fit: contain; background-color:#f8f8f8; padding: 8px;">
                                 {% else %}
-                                    <div class="bg-light d-flex align-items-center justify-content-center" style="height:220px;">
+                                    <div class="bg-light d-flex align-items-center justify-content-center" style="aspect-ratio: 1 / 1; width: 100%;">
                                         <span class="text-muted">Pas d'image</span>
                                     </div>
                                 {% endif %}
